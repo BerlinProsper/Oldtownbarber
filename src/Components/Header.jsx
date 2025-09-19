@@ -54,7 +54,6 @@ export default function Header() {
           />
         </IconButton>
 
-        {/* App Title */}
         <Typography
           variant="h6"
           component="div"
@@ -66,31 +65,15 @@ export default function Header() {
             cursor: "pointer",
             userSelect: "none",
             fontWeight: 700,
-            fontSize: '1.6rem',
+            fontSize: { xs: '1.1rem', sm: '1.3rem', md: '1.6rem' }, // responsive font size
             transition: "color 0.3s ease",
             "&:hover": {
-              color: "#a67b5b" // lighter brown hover effect
+              color: "#a67b5b"
             }
           }}
         >
           The Old Town Barber
         </Typography>
-
-        {/* Cart Icon */}
-        <CIcon
-          icon={icon.cilCart}
-          className="service-icon"
-          onClick={() => handleNavigate("/MyCart")}
-          style={{
-            cursor: 'pointer',
-            marginRight: 16,
-            fontSize: 28,
-            color: '#5c4033',
-            transition: "color 0.3s ease",
-          }}
-          onMouseEnter={e => e.currentTarget.style.color = "#a67b5b"}
-          onMouseLeave={e => e.currentTarget.style.color = "#5c4033"}
-        />
 
         {/* Menu Icon */}
         <IconButton

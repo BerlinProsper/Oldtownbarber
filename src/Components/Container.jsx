@@ -102,9 +102,15 @@ function Container() {
 
       <Grid container spacing={3}>
         {services.map((service) => {
+      
           const isSelected = selectedService.some((s) => s.id === service.id);
           return (
-            <Grid item xs={12} sm={6} md={4} key={service.id}>
+            
+                <Grid item xs={12} sm={6} md={4} lg={1} sx={{
+                width: { xs: '40vw', md: '15vw' },
+                maxWidth: { xs: 'none', md: '15vw' },
+                minWidth: { xs: 'none', md: '15vw' },
+              }}>
               <Card
                 onClick={() => serviceEdited(service)}
                 sx={{
@@ -124,8 +130,19 @@ function Container() {
                   },
                 }}
               >
-                <CardContent>
-                  <Stack
+
+                <CardContent
+                  sx={{
+                    minHeight: { xs: 140, sm: 160, md: 180 },
+                    maxHeight: { xs: 140, sm: 160, md: 180 },
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    alignItems: 'stretch',
+                    p: { xs: 2, sm: 3 },
+                    boxSizing: 'border-box',
+                  }}
+                ><Stack
                     direction="row"
                     alignItems="center"
                     justifyContent="space-between"
@@ -155,12 +172,12 @@ function Container() {
                   </Stack>
 
                   <Typography
-                    variant="h6"
+                    variant="h8"
                     sx={{
-                      mt: 2,
-                      fontWeight: 700,
+                      mt: 1,
+                      fontWeight: 300,
                       color: '#4e342e',
-                      fontSize: '1.1rem',
+                      fontSize: '0.8rem',
                     }}
                   >
                     {service.name}

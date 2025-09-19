@@ -43,6 +43,9 @@ setTotalPrice(0);
   window.location.href = "/";
 }
 const addDocument = async () => {
+if (selectedService.length==0){
+  return 0;
+}
   function generateUniqueCode() {
 return new  Date().getTime(); 
 }
@@ -62,9 +65,7 @@ const date = new Date().toLocaleString("en-IN", {
     timeZone: "Asia/Kolkata" // IST timezone
 });
 
-console.log(date);
-console.log("++++++++++++++++++++++++++++++++");
-console.log(services);
+
   try {
 const docRef = await addDoc(collection(db, "services"), {
   id: generateUniqueCode(),
