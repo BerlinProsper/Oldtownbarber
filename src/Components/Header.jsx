@@ -1,0 +1,153 @@
+
+import * as React from "react";
+import { useNavigate } from "react-router-dom";
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
+import Drawer from "@mui/material/Drawer";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import CIcon from '@coreui/icons-react';
+import * as icon from '@coreui/icons';
+
+export default function Header() {
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const navigate = useNavigate();
+
+  const handleDrawerOpen = () => setDrawerOpen(true);
+  const handleDrawerClose = () => setDrawerOpen(false);
+
+  const handleNavigate = (path) => {
+    navigate(path);
+    handleDrawerClose();
+  };
+
+  return (
+    <AppBar
+      position="static"
+      sx={{
+        backgroundColor: '#f5f5dc',  // beige background
+        boxShadow: "0 2px 8px rgba(102, 73, 49, 0.15)" // subtle shadow with dark brown tint
+      }}
+    >
+      <Toolbar>
+        {/* Logo Button */}
+        <IconButton
+          size="large"
+          edge="start"
+          aria-label="menu"
+          onClick={() => handleNavigate("/")}
+          sx={{
+            mr: 2,
+            color: '#5c4033',  // dark brown icon color
+            padding: 0,
+            "&:hover": { backgroundColor: "transparent" } // no highlight on hover
+          }}
+        >
+          <img
+            src="/logo.png"
+            alt="Logo"
+            style={{ height: 32, marginRight: 8, borderRadius: '4px' }}
+          />
+        </IconButton>
+
+        {/* App Title */}
+        <Typography
+          variant="h6"
+          component="div"
+          onClick={() => handleNavigate("/")}
+          sx={{
+            flexGrow: 1,
+            fontFamily: "'Dancing Script', cursive",
+            color: '#5c4033',
+            cursor: "pointer",
+            userSelect: "none",
+            fontWeight: 700,
+            fontSize: '1.6rem',
+            transition: "color 0.3s ease",
+            "&:hover": {
+              color: "#a67b5b" // lighter brown hover effect
+            }
+          }}
+        >
+          The Old Town Barber
+        </Typography>
+
+        {/* Cart Icon */}
+        <CIcon
+          icon={icon.cilCart}
+          className="service-icon"
+          onClick={() => handleNavigate("/MyCart")}
+          style={{
+            cursor: 'pointer',
+            marginRight: 16,
+            fontSize: 28,
+            color: '#5c4033',
+            transition: "color 0.3s ease",
+          }}
+          onMouseEnter={e => e.currentTarget.style.color = "#a67b5b"}
+          onMouseLeave={e => e.currentTarget.style.color = "#5c4033"}
+        />
+
+        {/* Menu Icon */}
+        <IconButton
+          onClick={handleDrawerOpen}
+          sx={{
+            color: '#5c4033',
+            "&:hover": {
+              backgroundColor: "transparent"
+            }
+          }}
+          aria-label="open drawer"
+        >
+          <MenuIcon />
+        </IconButton>
+      </Toolbar>
+
+      {/* Drawer */}
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={handleDrawerClose}
+        PaperProps={{
+          sx: {
+            width: '20vw',
+            maxWidth: 300,
+            backgroundColor: '#fffaf3', // very light beige background
+            color: '#4b2e2e', // dark brown text
+            boxShadow: "0 3px 12px rgba(102, 73, 49, 0.15)"
+          }
+        }}
+      >
+        <List>
+          {[
+            { text: "History", path: "/history" },
+            { text: "Add Services", path: "/addservices" },
+          ].map(({ text, path }) => (
+            <ListItem
+              button
+              key={text}
+              onClick={() => handleNavigate(path)}
+              sx={{
+                '&:hover': {
+                  backgroundColor: '#a67b5b',
+                  color: '#fffaf3',
+                },
+                color: '#5c4033',
+                fontWeight: '600',
+                borderRadius: '6px',
+                mx: 1,
+                my: 0.5,
+              }}
+            >
+              <ListItemText primary={text} />
+            </ListItem>
+          ))}
+        </List>
+      </Drawer>
+    </AppBar>
+  );
+}

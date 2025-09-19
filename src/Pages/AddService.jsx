@@ -1,0 +1,223 @@
+
+
+import React, { useState } from 'react';
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '../Firebase';
+import { useServiceContext } from '../Context/MyContext';
+
+import {
+  Box,
+  TextField,
+  Typography,
+  Button,
+  Paper,
+  Stack,
+  Divider,
+} from '@mui/material';
+
+function AddServices() {
+  const { fetchServices, services } = useServiceContext();
+  const [serviceName, setServiceName] = useState('');
+  const [price, setPrice] = useState('');
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'serviceName') setServiceName(value);
+    if (name === 'price') setPrice(value);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!serviceName || !price) return;
+
+    try {
+      await addDoc(collection(db, 'newservices'), {
+        name: serviceName,
+        price: parseFloat(price),
+      });
+      setServiceName('');
+      setPrice('');
+      alert('🎉 Service added!');
+      fetchServices();
+    } catch (error) {
+      alert('Error adding service: ' + error.message);
+    }
+  };
+
+  return (
+<Box
+  sx={{
+    minHeight: '100vh',
+    width: '100%',
+    overflowX: 'hidden',
+    overflowY: 'auto',
+    background: 'linear-gradient(135deg, #f5f0e1 0%, #967c4f 100%)',
+    fontFamily: 'Nunito, sans-serif',
+    display: 'flex',
+    justifyContent: 'center',
+    py: 6,
+    px: 2,
+  }}
+>
+  <Box
+    sx={{
+      width: '100%',
+      maxWidth: 400,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 1,
+    }}
+  >
+<Paper
+          elevation={4}
+          sx={{
+            p: 4,
+            borderRadius: '10px',
+            backgroundColor: '#fffaf5',
+            border: '1px solid #97643d',
+            mb: 4,
+          }}
+        >
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: 700,
+              color: '#4e342e',
+              mb: 3,
+              textAlign: 'center',
+            }}
+          >
+            ➕ Add New Service
+          </Typography>
+
+          <form onSubmit={handleSubmit}>
+            <Stack spacing={3}>
+              <TextField
+                label="Service Name"
+                variant="outlined"
+                name="serviceName"
+                value={serviceName}
+                onChange={handleChange}
+                fullWidth
+                required
+                InputProps={{
+                  sx: {
+                    borderRadius: '12px',
+                    backgroundColor: '#fff',
+                  },
+                }}
+              />
+
+              <TextField
+                label="Price (₹)"
+                variant="outlined"
+                name="price"
+                value={price}
+                onChange={handleChange}
+                fullWidth
+                type="number"
+                required
+                inputProps={{ min: '0', step: '0.01' }}
+                InputProps={{
+                  sx: {
+                    borderRadius: '12px',
+                    backgroundColor: '#fff',
+                  },
+                }}
+              />
+
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{
+                  backgroundColor: '#8d6e63',
+                  '&:hover': { backgroundColor: '#6d4c41' },
+                  fontWeight: 600,
+                  borderRadius: '12px',
+                  py: 1.2,
+                  fontSize: '1rem',
+                }}
+                fullWidth
+              >
+                Add Service
+              </Button>
+            </Stack>
+          </form>
+        </Paper>
+
+        <Divider sx={{ my: 3, borderColor: '#c9a97d' }} />
+
+        <Box>
+          <Typography
+            variant="h6"
+            sx={{ mb: 2, color: '#4e342e', fontWeight: 600, textAlign: 'center' }}
+          >
+            📋 Existing Services
+          </Typography>
+
+          <Stack spacing={2}>
+            {services && services.length > 0 ? (
+              services.map((service) => (
+                <Paper
+                  key={service.id}
+                  sx={{
+                    p: 2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    borderRadius: '10px',
+                    background: '#f5f0e1',
+                    border: '1px solid #e0c3a0',
+                  }}
+                  elevation={1}
+                >
+                  <Box>
+                    <Typography sx={{ fontWeight: 600, color: '#4e342e' }}>
+                      {service.name}
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: '#967c4f' }}>
+                      ₹{service.price}
+                    </Typography>
+                  </Box>
+                  <Button
+                    onClick={async () => {
+                      try {
+                        const { deleteDoc, doc } = await import('firebase/firestore');
+                        await deleteDoc(doc(db, 'newservices', service.id));
+                        fetchServices();
+                      } catch (err) {
+                        alert('Error deleting service: ' + err.message);
+                      }
+                    }}
+                    sx={{
+                      minWidth: 0,
+                      color: '#b71c1c',
+                      ml: 2,
+                    }}
+                    aria-label="delete"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="24"
+                      width="24"
+                      fill="#b71c1c"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M6 19q-.825 0-1.413-.588Q4 17.825 4 17V7H3V5h5V4h8v1h5v2h-1v10q0 .825-.587 1.412Q18.825 19 18 19Zm12-12H6v10q0 .425.288.712Q6.575 18 7 18h10q.425 0 .713-.288Q18 17.425 18 17ZM8 16h2V9H8Zm4 0h2V9h-2ZM6 7v10Z" />
+                    </svg>
+                  </Button>
+                </Paper>
+              ))
+            ) : (
+              <Typography variant="body2" sx={{ color: '#967c4f', textAlign: 'center' }}>
+                No services found.
+              </Typography>
+            )}
+          </Stack>
+        </Box>
+      </Box>
+    </Box>
+  );
+}
+
+export default AddServices;
