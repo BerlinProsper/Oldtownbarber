@@ -45,30 +45,30 @@ function AddServices() {
   };
 
   return (
-<Box
-  sx={{
-    minHeight: '100vh',
-    width: '100%',
-    overflowX: 'hidden',
-    overflowY: 'auto',
-    background: 'linear-gradient(135deg, #f5f0e1 0%, #967c4f 100%)',
-    fontFamily: 'Nunito, sans-serif',
-    display: 'flex',
-    justifyContent: 'center',
-    py: 6,
-    px: 2,
-  }}
->
-  <Box
-    sx={{
-      width: '100%',
-      maxWidth: 400,
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 1,
-    }}
-  >
-<Paper
+    <Box
+      sx={{
+        minHeight: '100vh',
+        width: '100%',
+        overflowX: 'hidden',
+        overflowY: 'auto',
+        background: 'linear-gradient(135deg, #f5f0e1 0%, #967c4f 100%)',
+        fontFamily: 'Nunito, sans-serif',
+        display: 'flex',
+        justifyContent: 'center',
+        py: 6,
+        px: 2,
+      }}
+    >
+      <Box
+        sx={{
+          width: '100%',
+          maxWidth: 800,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 1,
+        }}
+      >
+        <Paper
           elevation={4}
           sx={{
             p: 4,
@@ -155,7 +155,14 @@ function AddServices() {
             📋 Existing Services
           </Typography>
 
-          <Stack spacing={2}>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr' },
+              gap: 2,
+              justifyItems: 'stretch',
+            }}
+          >
             {services && services.length > 0 ? (
               services.map((service) => (
                 <Paper
@@ -168,6 +175,7 @@ function AddServices() {
                     borderRadius: '10px',
                     background: '#f5f0e1',
                     border: '1px solid #e0c3a0',
+                    minWidth: 0,
                   }}
                   elevation={1}
                 >
@@ -209,11 +217,11 @@ function AddServices() {
                 </Paper>
               ))
             ) : (
-              <Typography variant="body2" sx={{ color: '#967c4f', textAlign: 'center' }}>
+              <Typography variant="body2" sx={{ color: '#967c4f', textAlign: 'center', gridColumn: '1/-1' }}>
                 No services found.
               </Typography>
             )}
-          </Stack>
+          </Box>
         </Box>
       </Box>
     </Box>
