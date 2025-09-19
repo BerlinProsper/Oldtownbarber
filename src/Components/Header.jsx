@@ -113,13 +113,13 @@ export default function Header() {
         open={drawerOpen}
         onClose={handleDrawerClose}
         PaperProps={{
-          sx: {
-            width: '20vw',
+          sx: (theme) => ({
+            width: { xs: '80vw', sm: '40vw', md: '20vw' },
             maxWidth: 300,
             backgroundColor: '#fffaf3', // very light beige background
             color: '#4b2e2e', // dark brown text
             boxShadow: "0 3px 12px rgba(102, 73, 49, 0.15)"
-          }
+          })
         }}
       >
         <List>
