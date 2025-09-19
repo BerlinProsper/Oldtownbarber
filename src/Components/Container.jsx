@@ -45,7 +45,7 @@ function Container() {
     <Box
       sx={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #f5f0e1 0%, #b99f73ff 100%)',
+        background: 'linear-gradient(135deg, #f5f0e1 0%, #dee19eff 100%)',
         p: 4,
         fontFamily: 'Nunito, sans-serif',
         display: 'flex',
@@ -61,7 +61,7 @@ function Container() {
           textAlign: 'center',
           color: '#4e342e',
           fontFamily: "'Dancing Script', cursive",
-          fontSize: { xs: '1.5rem', sm: '0.5rem', md: '1.9rem' },
+          fontSize: { xs: '1.5rem', sm: '1x.5rem', md: '1.9rem' },
         }}
       >
         Choose Your Services
@@ -107,7 +107,7 @@ function Container() {
           return (
             
                 <Grid item xs={12} sm={6} md={4} lg={1} sx={{
-                width: { xs: '40vw', md: '15vw' },
+                width: { xs: '80vw', md: '15vw' },
                 maxWidth: { xs: 'none', md: '15vw' },
                 minWidth: { xs: 'none', md: '15vw' },
               }}>
