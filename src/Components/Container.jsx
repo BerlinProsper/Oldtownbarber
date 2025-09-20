@@ -91,6 +91,19 @@ function Container() {
         </Box>
       )}
 
+<Typography
+  variant="h6"
+  sx={{
+    mb: 2,
+    fontWeight: 700, // Professional bold
+    color: '#2f6b5f',
+    textAlign: 'center', // Center text
+    fontFamily: "'Roboto', 'Segoe UI', sans-serif",
+  }}
+>
+  Choose Services
+</Typography>
+
       <Grid container spacing={3}>
         {services.map((service) => {
       
