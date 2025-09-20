@@ -29,7 +29,7 @@ export default function Header() {
     <AppBar
       position="static"
       sx={{
-        backgroundColor: '#f5f5dc',  // beige background
+        backgroundColor: '#2f6b5f',  // beige background
         boxShadow: "0 2px 8px rgba(102, 73, 49, 0.15)" // subtle shadow with dark brown tint
       }}
     >
@@ -42,7 +42,7 @@ export default function Header() {
           onClick={() => handleNavigate("/")}
           sx={{
             mr: 2,
-            color: '#5c4033',  // dark brown icon color
+            color: '#2f6b5f',  // dark brown icon color
             padding: 0,
             "&:hover": { backgroundColor: "transparent" } // no highlight on hover
           }}
@@ -61,7 +61,7 @@ export default function Header() {
           sx={{
             flexGrow: 1,
             fontFamily: "'Dancing Script', cursive",
-            color: '#5c4033',
+            color: '#f3f7f6ff',
             cursor: "pointer",
             userSelect: "none",
             fontWeight: 700,
@@ -79,7 +79,7 @@ export default function Header() {
         <IconButton
           onClick={handleDrawerOpen}
           sx={{
-            color: '#5c4033',
+            color: '#ffffffff',
             "&:hover": {
               backgroundColor: "transparent"
             }
@@ -99,8 +99,8 @@ export default function Header() {
           sx: (theme) => ({
             width: { xs: '80vw', sm: '40vw', md: '20vw' },
             maxWidth: 300,
-            backgroundColor: '#fffaf3', // very light beige background
-            color: '#4b2e2e', // dark brown text
+            backgroundColor: '#c1dad5ff', // very light beige background
+            color: '#2f6b5f', // dark brown text
             boxShadow: "0 3px 12px rgba(102, 73, 49, 0.15)"
           })
         }}
@@ -116,10 +116,10 @@ export default function Header() {
               onClick={() => handleNavigate(path)}
               sx={{
                 '&:hover': {
-                  backgroundColor: '#a67b5b',
-                  color: '#fffaf3',
+                  backgroundColor: '#2f6b5f',
+                  color: '#c8e0dbff',
                 },
-                color: '#5c4033',
+                color: '#2f6b5f',
                 fontWeight: '600',
                 borderRadius: '6px',
                 mx: 1,

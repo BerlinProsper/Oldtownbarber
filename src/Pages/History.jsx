@@ -32,7 +32,7 @@ import { useNavigate } from "react-router-dom";
         const endOfDay = Timestamp.fromDate(tomorrow);
 
         const q = query(
-          collection(db, "services"),
+          collection(db, "historyservices"),
           where("timestamp", ">=", startOfDay),
           where("timestamp", "<", endOfDay),
           orderBy("timestamp", "desc")
@@ -116,7 +116,7 @@ import { useNavigate } from "react-router-dom";
               cy="25"
               r="20"
               fill="none"
-              stroke="#8d6e63"
+              stroke="#91cec2ff"
               strokeWidth="5"
               strokeDasharray="31.415, 31.415"
               transform="rotate(72.0001 25 25)"
@@ -135,18 +135,28 @@ import { useNavigate } from "react-router-dom";
 
 
     return (
-
 <div
   style={{
-    background: "#fffaf3",
+    minHeight: '100vh', // Ensures it covers full viewport height
+    background: "#bce6ddff",
     padding: "2rem",
     borderRadius: "10px",
     boxShadow: "0 3px 12px rgba(102, 73, 49, 0.15)",
-    color: "#4b2e2e",
-    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+    color: "#2f6b5f",
+    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
   }}
 >
-  <h2 style={{ color: "#5c4033", marginBottom: "1rem" }}>History</h2>
+  {/* Your content here */}
+
+ <h2
+  style={{
+    color: '#2f6b5f',
+    marginBottom: '1rem',
+    textAlign: 'center',
+  }}
+>
+  History
+</h2>
 
   <div style={{ marginBottom: "1.5rem" }}>
     <button
@@ -154,8 +164,8 @@ import { useNavigate } from "react-router-dom";
       style={{
         padding: "0.6rem 1.2rem",
         marginRight: "1rem",
-        backgroundColor: tab === "today" ? "#a67b5b" : "#eee0c9",
-        color: tab === "today" ? "#fffaf3" : "#5c4033",
+        backgroundColor: tab === "today" ? "#2f6b5f" : "#e7f1efff",
+        color: tab === "today" ? "#baddd6ff" : "#1f5b4fff",
         border: "none",
         borderRadius: "6px",
         cursor: "pointer",
@@ -169,8 +179,8 @@ import { useNavigate } from "react-router-dom";
       onClick={() => setTab("month")}
       style={{
         padding: "0.6rem 1.2rem",
-        backgroundColor: tab === "month" ? "#a67b5b" : "#eee0c9",
-        color: tab === "month" ? "#fffaf3" : "#5c4033",
+        backgroundColor: tab === "month" ? "#2f6b5f" : "#e4f8f4ff",
+        color: tab === "month" ? "#d3efe9ff" : "#2f6b5f",
         border: "none",
         borderRadius: "6px",
         cursor: "pointer",
@@ -184,7 +194,7 @@ import { useNavigate } from "react-router-dom";
 
   {tab === "today" ? (
     <div>
-      <h2 style={{ color: "#5c4033", marginBottom: "1rem" }}>
+      <h2 style={{ color: "#2f6b5f", marginBottom: "1rem" }}>
         Today's History
       </h2>
       <ul style={{ listStyle: "none", padding: 0 }}>
@@ -192,18 +202,18 @@ import { useNavigate } from "react-router-dom";
   <li
   key={item.id}
   style={{
-    background: "#f9f3e7",
+    background: "#e4f4f1ff",
     padding: "1rem",
     marginBottom: "1rem",
     borderRadius: "8px",
     boxShadow: "0 2px 8px rgba(166, 123, 91, 0.15)",
-    border: "1px solid #d9c9aa",
-    color: "#4b2e2e",
+    border: "1px solid #639d92ff",
+    color: "#2f6b5f",
     lineHeight: "1.5",
   }}
 >
   <div style={{ marginBottom: "0.8rem" }}>
-    <span style={{ fontWeight: "600", color: "#7b4f2c" }}>Services: </span>
+    <span style={{ fontWeight: "600", color: "#2f6b5f" }}>Services: </span>
     <span>{item.services.map(s => s.name).join(", ")}</span>
   </div>
 
@@ -222,7 +232,7 @@ import { useNavigate } from "react-router-dom";
 
         ))}
       </ul>
-      <h3 style={{ marginTop: "2rem", color: "#5c4033" }}>
+      <h3 style={{ marginTop: "2rem", color: "#2f6b5f" }}>
         Total Collection: ₹
         {history.reduce((sum, item) => sum + (item.price || 0), 0)}
       </h3>

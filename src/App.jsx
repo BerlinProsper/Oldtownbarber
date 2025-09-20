@@ -11,6 +11,8 @@ import AddServices from './Pages/AddService';
 
 function App() {
   return (
+    <div className='App'>
+
     <ServiceProvider>
       <div style={{ minHeight: '100vh', background: '#f5f5f5', display: 'flex', flexDirection: 'column' }}>
         <Header />
@@ -23,6 +25,8 @@ function App() {
         </Routes>
       </div>
     </ServiceProvider>
+        </div>
+
   );
 }
 

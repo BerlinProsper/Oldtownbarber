@@ -67,7 +67,7 @@ const date = new Date().toLocaleString("en-IN", {
 
 
   try {
-const docRef = await addDoc(collection(db, "services"), {
+const docRef = await addDoc(collection(db, "historyservices"), {
   id: generateUniqueCode(),
   services: selectedService,
   price: totalPrice,

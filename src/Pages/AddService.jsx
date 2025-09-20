@@ -50,13 +50,12 @@ function AddServices() {
         minHeight: '100vh',
         width: '100%',
         overflowX: 'hidden',
-        overflowY: 'auto',
-        background: 'linear-gradient(135deg, #f5f0e1 0%, #967c4f 100%)',
+        overflowY: 'hidden',
+        background: 'linear-gradient(135deg, #b4d4ceff 0%, #2f6b5f 100%)',
         fontFamily: 'Nunito, sans-serif',
         display: 'flex',
         justifyContent: 'center',
         py: 6,
-        px: 2,
       }}
     >
       <Box
@@ -73,8 +72,8 @@ function AddServices() {
           sx={{
             p: 4,
             borderRadius: '10px',
-            backgroundColor: '#fffaf5',
-            border: '1px solid #97643d',
+            backgroundColor: '#dff4f0ff',
+            border: '1px solid #347467ff',
             mb: 4,
           }}
         >
@@ -82,7 +81,7 @@ function AddServices() {
             variant="h5"
             sx={{
               fontWeight: 700,
-              color: '#4e342e',
+              color: '#2f6b5f',
               mb: 3,
               textAlign: 'center',
             }}
@@ -130,8 +129,8 @@ function AddServices() {
                 type="submit"
                 variant="contained"
                 sx={{
-                  backgroundColor: '#8d6e63',
-                  '&:hover': { backgroundColor: '#6d4c41' },
+                  backgroundColor: '#2f6b5f',
+                  '&:hover': { backgroundColor: '#6ca499ff' },
                   fontWeight: 600,
                   borderRadius: '12px',
                   py: 1.2,
@@ -145,12 +144,12 @@ function AddServices() {
           </form>
         </Paper>
 
-        <Divider sx={{ my: 3, borderColor: '#c9a97d' }} />
+        <Divider sx={{ my: 3, borderColor: '#a8cec7ff' }} />
 
         <Box>
           <Typography
             variant="h6"
-            sx={{ mb: 2, color: '#4e342e', fontWeight: 600, textAlign: 'center' }}
+            sx={{ mb: 2, color: '#073b31ff', fontWeight: 600, textAlign: 'center' }}
           >
             📋 Existing Services
           </Typography>
@@ -173,17 +172,17 @@ function AddServices() {
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     borderRadius: '10px',
-                    background: '#f5f0e1',
-                    border: '1px solid #e0c3a0',
+                    background: '#dff4f0ff',
+                    border: '1px solid #45756cff',
                     minWidth: 0,
                   }}
                   elevation={1}
                 >
                   <Box>
-                    <Typography sx={{ fontWeight: 600, color: '#4e342e' }}>
+                    <Typography sx={{ fontWeight: 600, color: '#2f6b5f' }}>
                       {service.name}
                     </Typography>
-                    <Typography variant="body2" sx={{ color: '#967c4f' }}>
+                    <Typography variant="body2" sx={{ color: '#29685cff' }}>
                       ₹{service.price}
                     </Typography>
                   </Box>
@@ -217,7 +216,7 @@ function AddServices() {
                 </Paper>
               ))
             ) : (
-              <Typography variant="body2" sx={{ color: '#967c4f', textAlign: 'center', gridColumn: '1/-1' }}>
+              <Typography variant="body2" sx={{ color: '#91c3b9ff', textAlign: 'center', gridColumn: '1/-1' }}>
                 No services found.
               </Typography>
             )}

@@ -14,11 +14,13 @@
 
 html, body, #root {
   height: 100%;
+  width: 100%;
   margin: 0;
   padding: 0;
-  background-color: #f5f0e1; /* Consistent background */
-  overflow-x: hidden;
+  overflow: hidden; /* ✅ add this */
+  background-color: #f5f0e1;
 }
+
 
 * {
   box-sizing: border-box;

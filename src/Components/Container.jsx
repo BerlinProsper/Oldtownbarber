@@ -45,27 +45,18 @@ function Container() {
     <Box
       sx={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #f5f0e1 0%, #dee19eff 100%)',
+        background: 'linear-gradient(135deg, #c3e4de 0%, #95c9c0ff 100%)',
         p: 4,
         fontFamily: 'Nunito, sans-serif',
         display: 'flex',
         flexDirection: 'column',
         flexGrow: 1,
+          overflowX: 'hidden',
+  overflowY: 'hidden',/* Prevent horizontal scrolling */
+  
       }}
     >
-      <Typography
-        variant="h4"
-        sx={{
-          mb: 4,
-          fontWeight: 200,
-          textAlign: 'center',
-          color: '#4e342e',
-          fontFamily: "'Dancing Script', cursive",
-          fontSize: { xs: '1.5rem', sm: '1x.5rem', md: '1.9rem' },
-        }}
-      >
-        Choose Your Services
-      </Typography>
+   
 
       {services.length === 0 && (
         <Box
@@ -82,7 +73,7 @@ function Container() {
               cy="25"
               r="20"
               fill="none"
-              stroke="#8d6e63"
+              stroke="#2c655a"
               strokeWidth="5"
               strokeDasharray="31.415, 31.415"
               transform="rotate(72.0001 25 25)"
@@ -117,9 +108,9 @@ function Container() {
                   cursor: 'pointer',
                   borderRadius: '18px',
                   border: isSelected
-                    ? '2px solid #6d4c41'
-                    : '1px solid #d7ccc8',
-                  backgroundColor: isSelected ? '#efebe9' : '#ffffff',
+                    ? '2px solid #2c655a'
+                    : '1px solid #d8efedff',
+                  backgroundColor: isSelected ? '#e1f3f0ff' : '#e4fdfbff',
                   boxShadow: isSelected
                     ? '0 6px 16px rgba(109, 76, 65, 0.2)'
                     : '0 2px 10px rgba(0,0,0,0.05)',
@@ -150,7 +141,7 @@ function Container() {
                   >
                     <Avatar
                       sx={{
-                        bgcolor: isSelected ? '#a1887f' : '#d7ccc8',
+                        bgcolor: isSelected ? '#2f6b5f' : '#d7ccc8',
                         color: '#fff',
                         width: 44,
                         height: 44,
@@ -162,7 +153,7 @@ function Container() {
 
                     <IconButton>
                       {isSelected ? (
-                        <span style={{ color: '#4e342e', fontSize: 24 }}>
+                        <span style={{ color: '#2c655a', fontSize: 24 }}>
                           ✓
                         </span>
                       ) : (
@@ -176,7 +167,7 @@ function Container() {
                     sx={{
                       mt: 1,
                       fontWeight: 300,
-                      color: '#4e342e',
+                      color: '#2c655a',
                       fontSize: '0.8rem',
                     }}
                   >
@@ -188,8 +179,8 @@ function Container() {
                     size="small"
                     sx={{
                       mt: 1,
-                      backgroundColor: '#fff3e0',
-                      color: '#6d4c41',
+                      backgroundColor: '#cff0edff',
+                      color: '#2c655a',
                       fontWeight: 'bold',
                       fontSize: '0.85rem',
                       borderRadius: '12px',
@@ -206,7 +197,7 @@ function Container() {
       <Box sx={{ mt: 5, textAlign: 'center' }}>
         <Typography
           variant="h6"
-          sx={{ mb: 2, fontWeight: 600, color: '#3e2723' }}
+          sx={{ mb: 2, fontWeight: 600, color: '#2f6b5f' }}
         >
           Total Price: <strong>₹{totalPrice}</strong>
         </Typography>
@@ -220,8 +211,8 @@ function Container() {
             variant="contained"
             onClick={addDocument}
             sx={{
-              backgroundColor: '#8d6e63',
-              '&:hover': { backgroundColor: '#795548' },
+              backgroundColor: '#2f6b5f',
+              '&:hover': { backgroundColor: '#4b8d7fff' },
               fontWeight: 700,
               px: 3,
               fontSize: '1rem',
@@ -237,14 +228,14 @@ function Container() {
             onClick={() => navigate('/MyCart')}
             sx={{
               fontWeight: 700,
-              borderColor: '#6d4c41',
-              color: '#6d4c41',
+              borderColor: '#2c655a',
+              color: '#417c70ff',
               px: 3,
               fontSize: '1rem',
               borderRadius: '12px',
               '&:hover': {
-                borderColor: '#4e342e',
-                backgroundColor: '#efebe9',
+                borderColor: '#2f6b5f',
+                backgroundColor: '#c5e4ddff',
               },
             }}
           >

@@ -33,7 +33,7 @@ return (
     <Box
         sx={{
             minHeight: '100vh',
-            background: 'linear-gradient(135deg, #f5f0e1 0%, #977b4cff 100%)',
+            background: 'linear-gradient(135deg, #b4d4ceff 0%, #2f6b5f 100%)',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
@@ -47,9 +47,9 @@ return (
                 p: 4,
                 maxWidth: 500,
                 width: '100%',
-                backgroundColor: '#fffaf5',
+                backgroundColor: '#dff4f0ff',
                 borderRadius: '20px',
-                border: '1px solid #e0cfc2',
+                border: '1px solid #477e72ff',
             }}
         >
             <Typography
@@ -58,7 +58,7 @@ return (
                     mb: 3,
                     fontWeight: 700,
                     textAlign: 'center',
-                    color: '#4e342e',
+                    color: '#2f6b5f',
                 }}
             >
                 🛒  Cart
@@ -84,10 +84,10 @@ return (
                                         secondary={`₹${item.price}`}
                                         primaryTypographyProps={{
                                             fontWeight: 600,
-                                            color: '#6d4c41',
+                                            color: '#2f6b5f',
                                         }}
                                         secondaryTypographyProps={{
-                                            color: '#8d6e63',
+                                            color: '#6aa095ff',
                                         }}
                                     />
                                     <Button
@@ -96,7 +96,7 @@ return (
                                             minWidth: 0,
                                             ml: 2,
                                             color: '#b71c1c',
-                                            '&:hover': { backgroundColor: '#fbe9e7' },
+                                            '&:hover': { backgroundColor: '#b5dbd4ff' },
                                         }}
                                         aria-label="Remove"
                                     >
@@ -134,8 +134,8 @@ return (
                             variant="contained"
                             onClick={addDocument}
                             sx={{
-                                backgroundColor: '#8d6e63',
-                                '&:hover': { backgroundColor: '#6d4c41' },
+                                backgroundColor: '#2f6b5f',
+                                '&:hover': { backgroundColor: '#b5dbd4ff' },
                                 fontWeight: 600,
                                 borderRadius: '12px',
                                 px: 3,
@@ -148,14 +148,14 @@ return (
                             variant="outlined"
                             onClick={emptyCart}
                             sx={{
-                                borderColor: '#6d4c41',
-                                color: '#6d4c41',
+                                borderColor: '#2f6b5f',
+                                color: '#2f6b5f',
                                 fontWeight: 600,
                                 borderRadius: '12px',
                                 px: 3,
                                 '&:hover': {
                                     backgroundColor: '#f5f0e1',
-                                    borderColor: '#4e342e',
+                                    borderColor: '#2f6b5f',
                                 },
                             }}
                         >
@@ -166,7 +166,7 @@ return (
             ) : (
                 <Typography
                     variant="body1"
-                    sx={{ textAlign: 'center', color: '#6d4c41', mt: 2 }}
+                    sx={{ textAlign: 'center', color: '#2f6b5f', mt: 2 }}
                 >
                      cart is empty 
                 </Typography>

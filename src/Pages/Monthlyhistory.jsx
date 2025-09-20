@@ -19,7 +19,7 @@ const MonthlyHistory = () => {
       const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
 
       const q = query(
-        collection(db, "services"),
+        collection(db, "historyservices"),
         where("timestamp", ">=", Timestamp.fromDate(startOfMonth)),
         where("timestamp", "<", Timestamp.fromDate(endOfMonth)),
         orderBy("timestamp", "desc")
@@ -51,7 +51,7 @@ const MonthlyHistory = () => {
               cy="25"
               r="20"
               fill="none"
-              stroke="#8d6e63"
+              stroke="#6dada0ff"
               strokeWidth="5"
               strokeDasharray="31.415, 31.415"
               transform="rotate(72.0001 25 25)"
@@ -72,24 +72,24 @@ const MonthlyHistory = () => {
     <div
      
     >
-      <h2 style={{ color: "#5c4033", marginBottom: "1.5rem" }}>Monthly History</h2>
+      <h2 style={{ color: "#2f6b6f", marginBottom: "1.5rem" }}>Monthly History</h2>
       <ul style={{ listStyle: "none", padding: 0 }}>
         {history.map(item => (
           <li
             key={item.id}
             style={{
-              background: "#f9f3e7",
+              background: "#e4f4f1ff",
               padding: "1rem",
               marginBottom: "1rem",
               borderRadius: "8px",
               boxShadow: "0 2px 8px rgba(166, 123, 91, 0.15)",
-              border: "1px solid #d9c9aa",
-              color: "#4b2e2e",
+              border: "1px solid #326e63ff",
+              color: "#2f5b6f",
               lineHeight: "1.5"
             }}
           >
-            <div style={{ marginBottom: "0.8rem", color: "#7b4f2c", fontWeight: "600" }}>
-              Services: <span style={{ fontWeight: "400" }}>{item.services.map(s => s.service).join(", ")}</span>
+            <div style={{ marginBottom: "0.8rem", color: "#2f5b6f", fontWeight: "600" }}>
+              Services: <span style={{ fontWeight: "400" }}>{item.services.map(s => s.name).join(", ")}</span>
             </div>
 
             <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -106,7 +106,7 @@ const MonthlyHistory = () => {
         ))}
       </ul>
 
-      <h3 style={{ marginTop: "2rem", color: "#5c4033" }}>
+      <h3 style={{ marginTop: "2rem", color: "#2f5b6f" }}>
         Total Collection: ₹{Total}
       </h3>
     </div>
