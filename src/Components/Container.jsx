@@ -1,5 +1,6 @@
-
+import PaymentPage from '../Pages/Payment'
 import React from 'react';
+import { useEffect } from 'react';
 import {
   Box,
   Grid,
@@ -16,6 +17,7 @@ import CIcon from '@coreui/icons-react';
 import * as icon from '@coreui/icons';
 import { useServiceContext } from '../Context/MyContext';
 import { useNavigate } from 'react-router-dom';
+import PaymentModal from './paymentoption';
 
 function Container() {
   const {
@@ -25,21 +27,68 @@ function Container() {
     setTotalPrice,
     addDocument,
     services,
+    paymentOption, 
+    setPaymentOption
   } = useServiceContext();
 
   const navigate = useNavigate();
 
-  const serviceEdited = (service) => {
-    const isAlreadySelected = selectedService.find((s) => s.id === service.id);
+ const serviceEdited = (service) => {
+  const isAlreadySelected = selectedService.find((s) => s.id === service.id);
 
-    if (isAlreadySelected) {
-      setSelectedService((prev) => prev.filter((s) => s.id !== service.id));
-      setTotalPrice(totalPrice - service.price);
-    } else {
-      setSelectedService((prev) => [...prev, service]);
-      setTotalPrice(totalPrice + service.price);
+  if (isAlreadySelected) {
+    // Remove the clicked service
+    setSelectedService((prev) => prev.filter((s) => s.id !== service.id));
+
+    // Adjust total price
+    setTotalPrice(totalPrice - service.price);
+
+    // Remove any free services added by this service
+    if (service.freeServices && service.freeServices.length > 0) {
+      const freeNames = service.freeServices.map((f) => f.name.trim().toLowerCase());
+
+      setSelectedService((prev) =>
+        prev.filter((s) => {
+          const isFree = s.price === 0;
+          const nameMatch = freeNames.includes(s.name.trim().toLowerCase());
+          return !(isFree && nameMatch);
+        })
+      );
     }
-  };
+
+  } else {
+    // Add clicked service
+    setSelectedService((prev) => [...prev, service]);
+    setTotalPrice(totalPrice + service.price);
+
+    // Check and add associated free services (by name)
+    if (service.freeServices && service.freeServices.length > 0) {
+      const freeNames = service.freeServices.map((f) => f.name.trim().toLowerCase());
+
+      const matchedFreeServices = services.filter(
+        (s) =>
+          freeNames.includes(s.name.trim().toLowerCase()) &&
+          !selectedService.some((sel) => sel.id === s.id)
+      );
+
+      const freeVersion = matchedFreeServices.map((s) => ({
+        ...s,
+        price: 0,
+        isFree: true,
+        sourceServiceId: service.id, // optional, useful for tracking
+      }));
+
+      setSelectedService((prev) => [...prev, ...freeVersion]);
+    }
+  }
+};
+
+useEffect(() => {
+  const script = document.createElement("script");
+  script.src = "https://checkout.razorpay.com/v1/checkout.js";
+  script.async = true;
+  document.body.appendChild(script);
+}, []);
 
   return (
     <Box
@@ -56,8 +105,13 @@ function Container() {
   
       }}
     >
+   {paymentOption==1?
    
-
+  <div>
+<PaymentModal/>
+  </div>
+  :
+   <div>
       {services.length === 0 && (
         <Box
           sx={{
@@ -91,18 +145,6 @@ function Container() {
         </Box>
       )}
 
-<Typography
-  variant="h6"
-  sx={{
-    mb: 2,
-    fontWeight: 700, // Professional bold
-    color: '#2f6b5f',
-    textAlign: 'center', // Center text
-    fontFamily: "'Roboto', 'Segoe UI', sans-serif",
-  }}
->
-  Choose Services
-</Typography>
 
       <Grid container spacing={3}>
         {services.map((service) => {
@@ -254,8 +296,12 @@ function Container() {
           >
             🛒 Go to Cart
           </Button>
+
         </Stack>
+
       </Box>
+      </div>
+}
     </Box>
   );
 }

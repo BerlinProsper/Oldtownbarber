@@ -1,5 +1,3 @@
-
-
 import React, { useState } from 'react';
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '../Firebase';
@@ -13,12 +11,16 @@ import {
   Paper,
   Stack,
   Divider,
+  Switch,
+  FormControlLabel,
+  Chip,
 } from '@mui/material';
 
 function AddServices() {
-  const { fetchServices, services } = useServiceContext();
+  const { fetchServices, services, freeServices, setFreeServices } = useServiceContext();
   const [serviceName, setServiceName] = useState('');
   const [price, setPrice] = useState('');
+  const [addFree, setAddFree] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -34,15 +36,42 @@ function AddServices() {
       await addDoc(collection(db, 'newservices'), {
         name: serviceName,
         price: parseFloat(price),
+        freeServices: addFree ? freeServices : [],
       });
       setServiceName('');
       setPrice('');
+      setFreeServices([])
       alert('🎉 Service added!');
       fetchServices();
     } catch (error) {
       alert('Error adding service: ' + error.message);
     }
   };
+
+  // Handler for toggling addFree switch
+  const handleAddFreeToggle = () => {
+    setAddFree((prev) => !prev);
+  };
+  console.log(services);
+
+  // Handler to add/remove service from freeServices array in context
+  const toggleFreeService = (service) => {
+    console.log(freeServices);
+    console.log("--------------");
+    
+  setFreeServices((prevFreeServices) => {
+    // Check if already selected
+    const isSelected = prevFreeServices.some((s) => s.id === service.id);
+    if (isSelected) {
+      // Remove service
+      return prevFreeServices.filter((s) => s.id !== service.id);
+    } else {
+      // Add service
+      return [...prevFreeServices, service];
+    }
+  });
+};
+
 
   return (
     <Box
@@ -124,7 +153,67 @@ function AddServices() {
                   },
                 }}
               />
+        <FormControlLabel
+          control={<Switch checked={addFree} onChange={handleAddFreeToggle} color="success" />}
+          label="Add Free Services"
+          sx={{ color: '#2f6b5f', fontWeight: 600, mb: 2, alignSelf: 'center' }}
+        />
 
+        {/* Conditional rendering of free services selector */}
+        {addFree && (
+          <Paper
+            elevation={3}
+            sx={{
+              p: 3,
+              borderRadius: '10px',
+              backgroundColor: '#e1f0ec',
+              border: '1px solid #347467ff',
+              mb: 4,
+              maxHeight: 200,
+              overflowY: 'auto',
+            }}
+          >
+            <Typography
+              variant="subtitle1"
+              sx={{ mb: 2, color: '#2f6b5f', fontWeight: 600, textAlign: 'center' }}
+            >
+              Select Services to Add as Free
+            </Typography>
+
+            <Stack
+              direction="row"
+              flexWrap="wrap"
+              gap={1}
+              justifyContent="center"
+            >
+              {services && services.length > 0 ? (
+                services.map((service) => {
+const selected = (Array.isArray(freeServices) ? freeServices : []).some(
+  (s) => String(s.id).trim() === String(service.id).trim()
+);
+                    return (
+                    <Chip
+                      key={service.id}
+                      label={service.name}
+                      color={selected ? 'success' : 'default'}
+                      variant={selected ? 'filled' : 'outlined'}
+                      onClick={() => toggleFreeService(service)}
+                      sx={{
+                      cursor: 'pointer',
+                      userSelect: 'none',
+                      backgroundColor: selected ? '#2f6b5f' : undefined,
+                      color: selected ? '#fff' : undefined,
+                      borderColor: selected ? '#2f6b5f' : undefined,
+                      }}
+                    />
+                    );
+                })
+              ) : (
+                <Typography sx={{ color: '#91c3b9ff' }}>No services available.</Typography>
+              )}
+            </Stack>
+          </Paper>
+        )}
               <Button
                 type="submit"
                 variant="contained"
@@ -143,6 +232,9 @@ function AddServices() {
             </Stack>
           </form>
         </Paper>
+
+        {/* Add Free Services Switch */}
+
 
         <Divider sx={{ my: 3, borderColor: '#a8cec7ff' }} />
 
@@ -216,7 +308,10 @@ function AddServices() {
                 </Paper>
               ))
             ) : (
-              <Typography variant="body2" sx={{ color: '#91c3b9ff', textAlign: 'center', gridColumn: '1/-1' }}>
+              <Typography
+                variant="body2"
+                sx={{ color: '#91c3b9ff', textAlign: 'center', gridColumn: '1/-1' }}
+              >
                 No services found.
               </Typography>
             )}

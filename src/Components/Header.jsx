@@ -12,13 +12,11 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import CIcon from '@coreui/icons-react';
 import * as icon from '@coreui/icons';
-
+import { useServiceContext } from "../Context/MyContext";
 export default function Header() {
-  const [drawerOpen, setDrawerOpen] = React.useState(false);
   const navigate = useNavigate();
 
-  const handleDrawerOpen = () => setDrawerOpen(true);
-  const handleDrawerClose = () => setDrawerOpen(false);
+const {handleDrawerClose, handleDrawerOpen, drawerOpen } = useServiceContext();
 
   const handleNavigate = (path) => {
     navigate(path);
@@ -57,7 +55,7 @@ export default function Header() {
         <Typography
           variant="h6"
           component="div"
-          onClick={() => handleNavigate("/")}
+          onClick={() => handleNavigate("/password")}
           sx={{
             flexGrow: 1,
             fontFamily: "'Dancing Script', cursive",
@@ -72,22 +70,11 @@ export default function Header() {
             }
           }}
         >
-          The Old Town Barber
+           Old Town Barber
         </Typography>
 
         {/* Menu Icon */}
-        <IconButton
-          onClick={handleDrawerOpen}
-          sx={{
-            color: '#ffffffff',
-            "&:hover": {
-              backgroundColor: "transparent"
-            }
-          }}
-          aria-label="open drawer"
-        >
-          <MenuIcon />
-        </IconButton>
+      
       </Toolbar>
 
       {/* Drawer */}
@@ -107,7 +94,8 @@ export default function Header() {
       >
         <List>
           {[
-            { text: "History", path: "/history" },
+            { text: "Recent", path: "/history" },
+              { text: "History", path: "/records" },
             { text: "Add Services", path: "/addservices" },
           ].map(({ text, path }) => (
             <ListItem

@@ -9,12 +9,14 @@ export const ServiceProvider = ({ children }) => {
 
   const [selectedService, setSelectedService] = useState([]);
 
-
+  const [cashOrUpi, setCashOrUpi] = useState('');
+  const [paymentOption, setPaymentOption] = useState(0)
   const [totalPrice, setTotalPrice] = useState(0);
 const [historyServices, setHistoryServices] = useState([]) 
-
+const [addButtonClicked, setAddButtonClicked]=useState(false)
 const [services, setServices] = useState([]);
-
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+const [freeServices, setFreeServices] = useState([]);
 
   const fetchServices = async () => {
     try {
@@ -43,9 +45,17 @@ setTotalPrice(0);
   window.location.href = "/";
 }
 const addDocument = async () => {
+          setAddButtonClicked(false);
+
 if (selectedService.length==0){
   return 0;
 }
+
+if (paymentOption==0){
+  setPaymentOption(1);
+  return 0;
+}
+
   function generateUniqueCode() {
 return new  Date().getTime(); 
 }
@@ -71,6 +81,7 @@ const docRef = await addDoc(collection(db, "historyservices"), {
   id: generateUniqueCode(),
   services: selectedService,
   price: totalPrice,
+  payment: cashOrUpi,
   date: date,
   timestamp: serverTimestamp()
 });
@@ -81,15 +92,20 @@ const docRef = await addDoc(collection(db, "historyservices"), {
             const data = doc.data();
  });
     });
-    
+      setCashOrUpi('');
+    setPaymentOption(0);
     getDocuments();
   } catch (e) {
-    console.error("Error adding document: ", e);
+    alert("Error adding document: ", e);
   }
-  alert("Document added successfully!");
-  window.location.href = "/";
-};
 
+  window.location.href = "/";
+
+
+};
+ 
+    const handleDrawerOpen = () => setDrawerOpen(true);
+  const handleDrawerClose = () => setDrawerOpen(false);
 const colRef = collection(db, 'yourCollectionName');
 
 const q = query(colRef, orderBy('id'));
@@ -110,7 +126,7 @@ async function getDocuments() {
 
 
   return (
-    <ServiceContext.Provider value={{  selectedService, setSelectedService, totalPrice, setTotalPrice , addDocument , emptyCart, services , fetchServices }}>
+    <ServiceContext.Provider value={{  selectedService, setSelectedService, totalPrice, setTotalPrice , addDocument , emptyCart, services , fetchServices , paymentOption , setPaymentOption , cashOrUpi, setCashOrUpi , addButtonClicked, setAddButtonClicked, drawerOpen,  handleDrawerClose, handleDrawerOpen, setFreeServices, freeServices}}>
       {children}
     </ServiceContext.Provider>
   );

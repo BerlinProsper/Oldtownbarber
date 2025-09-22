@@ -6,29 +6,30 @@ import {
   Box,
 
 } from '@mui/material';
-const MonthlyHistory = () => {
+const WeeklyHistory = () => {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [Total, setTotal] = useState(0);
   useEffect(() => {
-  async function loadHistory() {
+  async function loadWeeklyHistory() {
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
 
-    let startDate;
+    // Get the day of the week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+    const dayOfWeek = today.getDay();
 
-    if (today.getDate() === 1) {
-      // If today is the 1st, fetch only today
-      startDate = today;
-    } else {
-      // Else, fetch from the 1st of this month
-      startDate = new Date(today.getFullYear(), today.getMonth(), 1);
-    }
+    // Calculate the date of last Sunday
+    const lastSunday = new Date(today);
+    lastSunday.setDate(today.getDate() - dayOfWeek);
+    lastSunday.setHours(0, 0, 0, 0); // Set to 12:00 AM
 
+    // End time is now
+    const now = new Date();
+
+    // Firestore query
     const q = query(
       collection(db, "historyservices"),
-      where("timestamp", ">=", Timestamp.fromDate(startDate)),
-      where("timestamp", "<", Timestamp.fromDate(new Date(today.getTime() + 24 * 60 * 60 * 1000))), // include today
+      where("timestamp", ">=", Timestamp.fromDate(lastSunday)),
+      where("timestamp", "<=", Timestamp.fromDate(now)),
       orderBy("timestamp", "desc")
     );
 
@@ -43,13 +44,16 @@ const MonthlyHistory = () => {
     setLoading(false);
   }
 
-  loadHistory();
+  loadWeeklyHistory();
 }, []);
 const today = new Date();
-const firstOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-firstOfMonth.setHours(0, 0, 0, 0);
+const dayOfWeek = today.getDay();
+const lastSunday = new Date(today);
+lastSunday.setDate(today.getDate() - dayOfWeek);
+lastSunday.setHours(0, 0, 0, 0);
 
 const options = { year: 'numeric', month: 'long', day: 'numeric' };
+
 
   if (loading) return<Box
           sx={{
@@ -85,10 +89,10 @@ const options = { year: 'numeric', month: 'long', day: 'numeric' };
   return (
         <div>
           <h2 style={{ color: "#2f6b5f", marginBottom: "1rem" }}>
-            Monthly  Records
+            Weekly  Records
           </h2>
-           <p style={{ color: "#4a7c6b", fontWeight: 500, marginBottom: "1.5rem" }}>
-  Records from start of this month: <strong>{firstOfMonth.toLocaleDateString(undefined, options)}</strong>
+          <p style={{ color: "#4a7c6b", fontWeight: 500, marginBottom: "1.5rem" }}>
+  Records from last Sunday: <strong>{lastSunday.toLocaleDateString(undefined, options)}</strong>
 </p>
 
           <ul style={{ listStyle: "none", padding: 0 }}>
@@ -167,4 +171,4 @@ const options = { year: 'numeric', month: 'long', day: 'numeric' };
   );
 };
 
-export default MonthlyHistory;
+export default WeeklyHistory;
