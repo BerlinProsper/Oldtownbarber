@@ -4,12 +4,11 @@ import Header from './Components/Header';
 import Container from './Components/Container';
 
 import History from './Pages/History';
-import Target from './Pages/Target';
-import Account from './Pages/Account';
 import MyCart from './Pages/Cart';
 import AddServices from './Pages/AddService';
-import Records from './Pages/FetchHistory/history';
+
 import PasswordProtectedPage from './Components/AdminPANEL.JSX';
+import Records from './Pages/FetchHistory/history';
 
 function App() {
   return (
