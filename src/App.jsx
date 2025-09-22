@@ -7,7 +7,6 @@ import History from './Pages/History';
 import MyCart from './Pages/Cart';
 import AddServices from './Pages/AddService';
 
-import PasswordProtectedPage from './Components/AdminPANEL.JSX';
 import Records from './Pages/FetchHistory/history';
 
 function App() {

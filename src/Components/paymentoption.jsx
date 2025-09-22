@@ -8,6 +8,7 @@ function paymentMethod(pay){
             setAddButtonClicked(true);
 setCashOrUpi(pay)
 }
+
 return (
     <div className="modal-overlay">
         <div className="modal-container">
