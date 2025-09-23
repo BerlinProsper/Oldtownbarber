@@ -1,6 +1,6 @@
 import PaymentPage from '../Pages/Payment'
 import React from 'react';
-import { useEffect } from 'react';
+import { useEffect , useState} from 'react';
 import {
   Box,
   Grid,
@@ -12,12 +12,14 @@ import {
   Stack,
   Chip,
   Avatar,
+  TextField
 } from '@mui/material';
 import CIcon from '@coreui/icons-react';
 import * as icon from '@coreui/icons';
 import { useServiceContext } from '../Context/MyContext';
 import { useNavigate } from 'react-router-dom';
 import PaymentModal from './paymentoption';
+import MyCart from '../Pages/Cart';
 
 function Container() {
   const {
@@ -30,6 +32,7 @@ function Container() {
     paymentOption, 
     setPaymentOption
   } = useServiceContext();
+const [searchText, setSearchText] = useState('');
 
   const navigate = useNavigate();
 
@@ -91,6 +94,14 @@ useEffect(() => {
 }, []);
 
   return (
+    <div>
+       {paymentOption==1?
+   
+  <div>
+<MyCart/>
+  </div>
+  :
+  
     <Box
       sx={{
         minHeight: '100vh',
@@ -105,13 +116,9 @@ useEffect(() => {
   
       }}
     >
-   {paymentOption==1?
-   
-  <div>
-<PaymentModal/>
-  </div>
-  :
+  
    <div>
+    
       {services.length === 0 && (
         <Box
           sx={{
@@ -145,6 +152,20 @@ useEffect(() => {
         </Box>
       )}
 
+<Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+<Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
+  <Typography
+    variant="h6"
+    sx={{
+      fontWeight: 800,
+      color: '#2f6b5f',
+    }}
+  >
+    <strong>Choose  Your Services</strong>
+  </Typography>
+</Box>
+
+</Box>
 
       <Grid container spacing={3}>
         {services.map((service) => {
@@ -152,11 +173,12 @@ useEffect(() => {
           const isSelected = selectedService.some((s) => s.id === service.id);
           return (
             
-                <Grid item xs={12} sm={6} md={4} lg={1} sx={{
-                width: { xs: '80vw', md: '15vw' },
-                maxWidth: { xs: 'none', md: '15vw' },
-                minWidth: { xs: 'none', md: '15vw' },
-              }}>
+             <Grid item xs={6} sm={6} md={4} lg={1} sx={{
+  width: { xs: '80vw', md: '15vw' },
+  maxWidth: { xs: 'none', md: '15vw' },
+  minWidth: { xs: 'none', md: '15vw' },
+}}>
+
               <Card
                 onClick={() => serviceEdited(service)}
                 sx={{
@@ -278,31 +300,16 @@ useEffect(() => {
             📄 Add Services
           </Button>
 
-          <Button
-            variant="outlined"
-            onClick={() => navigate('/MyCart')}
-            sx={{
-              fontWeight: 700,
-              borderColor: '#2c655a',
-              color: '#417c70ff',
-              px: 3,
-              fontSize: '1rem',
-              borderRadius: '12px',
-              '&:hover': {
-                borderColor: '#2f6b5f',
-                backgroundColor: '#c5e4ddff',
-              },
-            }}
-          >
-            🛒 Go to Cart
-          </Button>
+      
 
         </Stack>
 
       </Box>
       </div>
-}
+
     </Box>
+}
+      </div>
   );
 }
 

@@ -105,3 +105,13 @@ h2 {
     flex: 1 1 100%;
   }
 }
+.qr-code-container {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.upi-info {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #333;
+}

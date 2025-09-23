@@ -8,7 +8,7 @@ const ServiceContext = createContext();
 export const ServiceProvider = ({ children }) => {
 
   const [selectedService, setSelectedService] = useState([]);
-
+ 
   const [cashOrUpi, setCashOrUpi] = useState('');
   const [paymentOption, setPaymentOption] = useState(0)
   const [totalPrice, setTotalPrice] = useState(0);
@@ -45,6 +45,7 @@ setTotalPrice(0);
   window.location.href = "/";
 }
 const addDocument = async () => {
+  
           setAddButtonClicked(false);
 
 if (selectedService.length==0){

@@ -219,14 +219,24 @@ const TodayHistory = () => {
             fontWeight: "bold",
           }}
         >
-          Monthly History
+          Monthly Records
         </button>
       </div>
 
       <div ref={pdfRef}>
         {tab === "today" ? (
           <div>
-            <h2>Today's Records</h2>
+        <h2>Today's Records</h2>
+<p style={{ fontSize: '0.9rem', color: '#2f5b6f', marginTop: '4px' }}>
+  {new Date().toLocaleDateString('en-IN', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })}
+</p>
+
+
                 <ul style={{ listStyle: "none", padding: 0 }}>
             {history.map(item => (
               <li
