@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-import Monthlyhistory from "./Monthlyhistory";
-import WeeklyHistory from "./weeklyHistory";
+import Monthlyhistory from "./FetchHistory/Monthlyhistory";
+import WeeklyHistory from "./FetchHistory/weeklyHistory";
 
 const Records = () => {
   const [tab, setTab] = useState("week");

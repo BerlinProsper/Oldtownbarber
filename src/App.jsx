@@ -7,7 +7,8 @@ import History from './Pages/History';
 import MyCart from './Pages/Cart';
 import AddServices from './Pages/AddService';
 
-import Records from './Pages/FetchHistory/history';
+import Records from './Pages/Historyy';
+import PasswordProtectedPage from './Components/AdminPANEL';
 
 function App() {
   return (
@@ -22,8 +23,7 @@ function App() {
           <Route path="/addservices" element={<AddServices />} />
           <Route path="/records" element={<Records />} />
           <Route path='/MyCart' element={<MyCart/>}/>
-                    <Route path='/password' element={<PasswordProtectedPage/>}/>
-
+<Route path='/password' element={<PasswordProtectedPage/>}/>
         </Routes>
       </div>
     </ServiceProvider>
