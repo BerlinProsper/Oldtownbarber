@@ -3,12 +3,12 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import Monthlyhistory from "./FetchHistory/Monthlyhistory";
 import WeeklyHistory from "./FetchHistory/weeklyHistory";
+import ByDate from "./FetchHistory/ByDate"; // 👈 NEW
 
 const Records = () => {
   const [tab, setTab] = useState("week");
   const pdfRef = useRef();
 
-  // Inject styles for mobile + PDF export
   useEffect(() => {
     const style = document.createElement("style");
     style.innerHTML = `
@@ -39,7 +39,6 @@ const Records = () => {
         }
       }
 
-      /* PDF export styles */
       .pdf-mode {
         background: #fff !important;
         color: #000 !important;
@@ -98,7 +97,7 @@ const Records = () => {
   const handleDownloadPDF = async () => {
     const input = pdfRef.current;
     input.classList.add("pdf-mode");
-    await new Promise((res) => setTimeout(res, 100)); // Allow styles to apply
+    await new Promise((res) => setTimeout(res, 100));
 
     const canvas = await html2canvas(input, {
       scale: 2,
@@ -181,10 +180,26 @@ const Records = () => {
         >
           Last Month
         </button>
+        <button
+          onClick={() => setTab("date")}
+          style={{
+            padding: "0.6rem 1.2rem",
+            backgroundColor: tab === "date" ? "#2f6b5f" : "#e4f8f4ff",
+            color: tab === "date" ? "#d3efe9ff" : "#2f6b5f",
+            border: "none",
+            borderRadius: "6px",
+            cursor: "pointer",
+            fontWeight: "bold",
+          }}
+        >
+          Pick a Date
+        </button>
       </div>
 
       <div ref={pdfRef}>
-        {tab === "week" ? <WeeklyHistory /> : <Monthlyhistory />}
+        {tab === "week" && <WeeklyHistory />}
+        {tab === "month" && <Monthlyhistory />}
+        {tab === "date" && <ByDate />}
       </div>
 
       <div style={{ textAlign: "center", marginTop: "2rem" }}>

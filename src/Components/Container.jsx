@@ -38,33 +38,38 @@ const [searchText, setSearchText] = useState('');
 
   const navigate = useNavigate();
 
- const serviceEdited = (service) => {
+const serviceEdited = (service) => {
   const isAlreadySelected = selectedService.find((s) => s.id === service.id);
 
-  if (isAlreadySelected) {
-    // Remove the clicked service
-    setSelectedService((prev) => prev.filter((s) => s.id !== service.id));
+if (isAlreadySelected) {
+  // Find the service in selectedService by name (case-insensitive match)
+  const matchedService = selectedService.find(
+    (s) => s.name.trim().toLowerCase() === service.name.trim().toLowerCase()
+  );
 
-    // Adjust total price
-    setTotalPrice(totalPrice - service.price);
+  if (matchedService && matchedService.price > 0) {
+    setTotalPrice((prev) => Math.max(0, prev - matchedService.price));
+  }
 
-    // Remove any free services added by this service
-    if (service.freeServices && service.freeServices.length > 0) {
-      const freeNames = service.freeServices.map((f) => f.name.trim().toLowerCase());
+  // Remove the main service
+  setSelectedService((prev) => prev.filter((s) => s.id !== service.id));
 
-      setSelectedService((prev) =>
-        prev.filter((s) => {
-          const isFree = s.price === 0;
-          const nameMatch = freeNames.includes(s.name.trim().toLowerCase());
-          return !(isFree && nameMatch);
-        })
-      );
-    }
+  // Remove any free services associated with it
+  if (service.freeServices && service.freeServices.length > 0) {
+    const freeNames = service.freeServices.map((f) => f.name.trim().toLowerCase());
 
-  } else {
+    setSelectedService((prev) =>
+      prev.filter((s) => {
+        const isFree = s.price === 0;
+        const nameMatch = freeNames.includes(s.name.trim().toLowerCase());
+        return !(isFree && nameMatch);
+      })
+    );
+  }
+} else  {
     // Add clicked service
     setSelectedService((prev) => [...prev, service]);
-    setTotalPrice(totalPrice + service.price);
+    setTotalPrice(prev => prev + service.price);
 
     // Check and add associated free services (by name)
     if (service.freeServices && service.freeServices.length > 0) {
@@ -80,7 +85,7 @@ const [searchText, setSearchText] = useState('');
         ...s,
         price: 0,
         isFree: true,
-        sourceServiceId: service.id, // optional, useful for tracking
+        sourceServiceId: service.id,
       }));
 
       setSelectedService((prev) => [...prev, ...freeVersion]);
