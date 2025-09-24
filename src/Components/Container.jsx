@@ -1,5 +1,7 @@
 import PaymentPage from '../Pages/Payment'
 import React from 'react';
+import SearchIcon from '@mui/icons-material/Search';
+
 import { useEffect , useState} from 'react';
 import {
   Box,
@@ -101,21 +103,20 @@ useEffect(() => {
 <MyCart/>
   </div>
   :
-  
-    <Box
-      sx={{
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #c3e4de 0%, #95c9c0ff 100%)',
-        p: 4,
-        fontFamily: 'Nunito, sans-serif',
-        display: 'flex',
-        flexDirection: 'column',
-        flexGrow: 1,
-          overflowX: 'hidden',
-  overflowY: 'hidden',/* Prevent horizontal scrolling */
-  
-      }}
-    >
+  <Box
+  sx={{
+    minHeight: '100vh',
+    background: 'linear-gradient(135deg, #d6f2f1ff 0%, #f5f9f9 100%)',
+    p: 4,
+    fontFamily: '"Inter", "Nunito", sans-serif',
+    display: 'flex',
+    flexDirection: 'column',
+    flexGrow: 1,
+    overflowX: 'hidden',
+    overflowY: 'hidden',
+  }}
+>
+
   
    <div>
     
@@ -153,22 +154,68 @@ useEffect(() => {
       )}
 
 <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
-<Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
+<Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3, width: '100%' }}>
   <Typography
     variant="h6"
     sx={{
       fontWeight: 800,
       color: '#2f6b5f',
+      mb: 1,
     }}
   >
-    <strong>Choose  Your Services</strong>
+    <strong>Choose Your Services</strong>
   </Typography>
+
+
+<TextField
+  placeholder="Search services..."
+  value={searchText}
+  onChange={(e) => setSearchText(e.target.value)}
+  InputProps={{
+    startAdornment: <SearchIcon sx={{ color: '#2f6b5f', mr: 1 }} />,
+    sx: {
+      backgroundColor: '#ffffffcc',
+      borderRadius: '10px',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+      border: '1px solid #d9e2ec',
+      transition: '0.3s',
+      '&:hover': {
+        borderColor: '#2f6b5f',
+      },
+      '&.Mui-focused': {
+        borderColor: '#2f6b5f',
+        boxShadow: '0 0 0 3px rgba(47, 91, 111, 0.15)',
+      },
+    },
+  }}
+  size="small"
+  sx={{
+    width: { xs: '100%', md: '60%' },
+    mb: 2,
+  }}
+/>
+
 </Box>
+
 
 </Box>
 
       <Grid container spacing={3}>
-        {services.map((service) => {
+{services
+  .filter((service) => {
+    const query = searchText.toLowerCase().trim();
+    const name = service.name.toLowerCase();
+
+    // Allow match by any word, starting with or containing the query
+    return query
+      .split(' ')
+      .every((word) =>
+        name
+          .split(' ')
+          .some((part) => part.startsWith(word) || part.includes(word))
+      );
+  })
+  .map((service) => {
       
           const isSelected = selectedService.some((s) => s.id === service.id);
           return (
@@ -179,25 +226,29 @@ useEffect(() => {
   minWidth: { xs: 'none', md: '15vw' },
 }}>
 
-              <Card
-                onClick={() => serviceEdited(service)}
-                sx={{
-                  cursor: 'pointer',
-                  borderRadius: '18px',
-                  border: isSelected
-                    ? '2px solid #2c655a'
-                    : '1px solid #d8efedff',
-                  backgroundColor: isSelected ? '#e1f3f0ff' : '#e4fdfbff',
-                  boxShadow: isSelected
-                    ? '0 6px 16px rgba(109, 76, 65, 0.2)'
-                    : '0 2px 10px rgba(0,0,0,0.05)',
-                  transition: 'all 0.3s ease',
-                  '&:hover': {
-                    transform: 'scale(1.03)',
-                    boxShadow: '0 8px 20px rgba(0,0,0,0.08)',
-                  },
-                }}
-              >
+             <Card
+  onClick={() => serviceEdited(service)}
+  sx={{
+    cursor: 'pointer',
+    borderRadius: '20px',
+    border: isSelected
+      ? '2px solid #2f6b5f'
+      : '1px solid rgba(255, 255, 255, 0.2)',
+    background: isSelected
+      ? 'rgba(47, 91, 111, 0.1)'
+      : 'rgba(255, 255, 255, 0.6)',
+    backdropFilter: 'blur(10px)',
+    boxShadow: isSelected
+      ? '0 6px 20px rgba(47, 91, 111, 0.2)'
+      : '0 4px 12px rgba(0, 0, 0, 0.06)',
+    transition: 'all 0.3s ease',
+    '&:hover': {
+      transform: 'scale(1.035)',
+      boxShadow: '0 10px 28px rgba(0,0,0,0.1)',
+    },
+  }}
+>
+
 
                 <CardContent
                   sx={{
@@ -216,15 +267,18 @@ useEffect(() => {
                     justifyContent="space-between"
                     spacing={2}
                   >
-                    <Avatar
-                      sx={{
-                        bgcolor: isSelected ? '#2f6b5f' : '#d7ccc8',
-                        color: '#fff',
-                        width: 44,
-                        height: 44,
-                        fontWeight: 700,
-                      }}
-                    >
+                   <Avatar
+  sx={{
+    bgcolor: isSelected ? '#2f6b5f' : '#ccd6dd',
+    color: '#fff',
+    width: 44,
+    height: 44,
+    fontWeight: 600,
+    fontSize: '1rem',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+  }}
+>
+
                       {service.name[0].toUpperCase()}
                     </Avatar>
 
@@ -251,19 +305,21 @@ useEffect(() => {
                     {service.name}
                   </Typography>
 
-                  <Chip
-                    label={`₹${service.price}`}
-                    size="small"
-                    sx={{
-                      mt: 1,
-                      backgroundColor: '#cff0edff',
-                      color: '#2c655a',
-                      fontWeight: 'bold',
-                      fontSize: '0.85rem',
-                      borderRadius: '12px',
-                      px: 1.5,
-                    }}
-                  />
+                <Chip
+  label={`₹${service.price}`}
+  size="small"
+  sx={{
+    mt: 1,
+    backgroundColor: isSelected ? '#2f6b5f' : '#e0f7f9',
+    color: isSelected ? '#fff' : '#2f6b5f',
+    fontWeight: 'bold',
+    fontSize: '0.85rem',
+    borderRadius: '10px',
+    px: 1.5,
+    boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
+  }}
+/>
+
                 </CardContent>
               </Card>
             </Grid>
@@ -271,40 +327,50 @@ useEffect(() => {
         })}
       </Grid>
 
-      <Box sx={{ mt: 5, textAlign: 'center' }}>
-        <Typography
-          variant="h6"
-          sx={{ mb: 2, fontWeight: 600, color: '#2f6b5f' }}
-        >
-          Total Price: <strong>₹{totalPrice}</strong>
-        </Typography>
+<Box
+  sx={{
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    mb: 2, // optional margin below
+  }}
+>
+  <Typography
+    variant="h6"
+    sx={{ fontWeight: 600, color: '#2f6b5f' }}
+  >
+    Total Price: <strong>₹{totalPrice}</strong>
+  </Typography>
+</Box>
 
         <Stack
           direction={{ xs: 'column', sm: 'row' }}
           spacing={2}
           justifyContent="center"
         >
-          <Button
-            variant="contained"
-            onClick={addDocument}
-            sx={{
-              backgroundColor: '#2f6b5f',
-              '&:hover': { backgroundColor: '#4b8d7fff' },
-              fontWeight: 700,
-              px: 3,
-              fontSize: '1rem',
-              borderRadius: '12px',
-              color: '#fff',
-            }}
-          >
-            📄 Add Services
-          </Button>
+       <Button
+  variant="contained"
+  onClick={addDocument}
+  sx={{
+    backgroundColor: '#2f6b5f',
+    '&:hover': { backgroundColor: '#3c7089' },
+    fontWeight: 400,
+    px: 4,
+    fontSize: '1rem',
+    borderRadius: '14px',
+    color: '#fff',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+    transition: 'all 0.3s ease-in-out',
+  }}
+>
+  📄 Add Services
+</Button>
 
       
 
         </Stack>
 
-      </Box>
       </div>
 
     </Box>

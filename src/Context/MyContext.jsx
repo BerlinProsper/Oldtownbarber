@@ -8,7 +8,7 @@ const ServiceContext = createContext();
 export const ServiceProvider = ({ children }) => {
 
   const [selectedService, setSelectedService] = useState([]);
- 
+  
   const [cashOrUpi, setCashOrUpi] = useState('');
   const [paymentOption, setPaymentOption] = useState(0)
   const [totalPrice, setTotalPrice] = useState(0);
@@ -34,6 +34,8 @@ const [freeServices, setFreeServices] = useState([]);
 
   useEffect(() => {
   fetchServices();
+  console.log("hi");
+  
 }, []);
 
 
