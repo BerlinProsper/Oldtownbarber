@@ -8,7 +8,8 @@ const ServiceContext = createContext();
 export const ServiceProvider = ({ children }) => {
 
   const [selectedService, setSelectedService] = useState([]);
-  
+    const [splitUPI, setSplitUPI] = useState(0);
+
   const [cashOrUpi, setCashOrUpi] = useState('');
   const [paymentOption, setPaymentOption] = useState(0)
   const [totalPrice, setTotalPrice] = useState(0);
@@ -85,6 +86,7 @@ const docRef = await addDoc(collection(db, "historyservices"), {
   services: selectedService,
   price: totalPrice,
   payment: cashOrUpi,
+  cash_plus_upi: splitUPI,
   date: date,
   timestamp: serverTimestamp()
 });
@@ -129,7 +131,7 @@ async function getDocuments() {
 
 
   return (
-    <ServiceContext.Provider value={{  selectedService, setSelectedService, totalPrice, setTotalPrice , addDocument , emptyCart, services , fetchServices , paymentOption , setPaymentOption , cashOrUpi, setCashOrUpi , addButtonClicked, setAddButtonClicked, drawerOpen,  handleDrawerClose, handleDrawerOpen, setFreeServices, freeServices}}>
+    <ServiceContext.Provider value={{  selectedService, setSelectedService, totalPrice, setTotalPrice , addDocument , emptyCart, services , fetchServices , paymentOption , setPaymentOption , cashOrUpi, setCashOrUpi , addButtonClicked, setAddButtonClicked, drawerOpen,  handleDrawerClose, handleDrawerOpen, setFreeServices, freeServices , splitUPI, setSplitUPI}}>
       {children}
     </ServiceContext.Provider>
   );

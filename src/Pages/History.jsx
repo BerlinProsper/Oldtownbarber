@@ -283,9 +283,16 @@ const TodayHistory = () => {
                     <span style={{ fontWeight: "600" }}>Price: </span>
                     <span>{`₹${item.price}`}</span>
                   </div>
-                  <div>
+ {item.payment === "CashUPI" && item.cash_plus_upi ? (
+                    <div>
+                      <span style={{ fontWeight: "600" }}>{item.cash_plus_upi} UPI + {item.price - item.cash_plus_upi} Cash Payment </span>
+                    </div>
+                  ) :   <div>
                     <span style={{ fontWeight: "600" }}>{item.payment} Payment</span>
-                  </div>
+                  </div>}
+
+
+                
                 </div>
               </li>
             ))}
@@ -298,17 +305,30 @@ const TodayHistory = () => {
             <h4>
               <br />
               <span style={{ fontWeight: 600, color: "#4a7c6b" }}>
-                Total payment in cash: ₹
-                {history
-                  .filter((item) => item.payment === "Cash")
-                  .reduce((sum, item) => sum + (item.price || 0), 0)}
+                Total payment in cash: ₹{history
+  .filter((item) => item.payment === "Cash" || item.payment === "CashUPI")
+  .reduce((sum, item) => {
+    if (item.payment === "CashUPI") {
+      return sum + ((item.price || 0) - (item.cash_plus_upi || 0));
+    } else {
+      return sum + (item.price || 0);
+    }
+  }, 0)}
+
               </span>
               <br />
               <span style={{ fontWeight: 600, color: "#4a7c6b" }}>
-                Total payment via UPI: ₹
-                {history
-                  .filter((item) => item.payment === "UPI")
-                  .reduce((sum, item) => sum + (item.price || 0), 0)}
+          Total payment via UPI: ₹{history
+  .filter((item) => item.payment === "UPI" || item.payment === "CashUPI")
+  .reduce((sum, item) => {
+    if (item.payment === "CashUPI") {
+      return sum + Number(item.cash_plus_upi || 0);
+    } else {
+      return sum + Number(item.price || 0);
+    }
+  }, 0)}
+
+
               </span>
             </h4>
           </div>

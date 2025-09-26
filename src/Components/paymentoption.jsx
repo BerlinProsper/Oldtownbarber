@@ -1,18 +1,24 @@
 import React, { useState } from 'react';
 import { useServiceContext } from '../Context/MyContext';
 import { QRCodeSVG } from 'qrcode.react';
+import CloseIcon from '@mui/icons-material/Close';
+import IconButton from '@mui/material/IconButton';
+
 import {
   Box,
   Typography,
+  TextField,
   Modal,
   Paper,
   Button,
   Stack,
   Divider,
   Fade,
+  useMediaQuery,
+  useTheme
 } from '@mui/material';
 
-const PaymentModal = ({ onNext }) => {
+const PaymentModal = ({ onClose }) => {
   const {
     setPaymentOption,
     setCashOrUpi,
@@ -21,8 +27,14 @@ const PaymentModal = ({ onNext }) => {
     addButtonClicked,
     setAddButtonClicked,
     totalPrice,
+    splitUPI,
+    setSplitUPI
   } = useServiceContext();
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // sm = 600px
+  const [splitMSG, setSplitMSG] = useState('');
+  const [showSplitQR, setShowSplitQR] = useState(false);
   const [showConfirmPopup, setShowConfirmPopup] = useState(false);
   const [isYesDisabled, setIsYesDisabled] = useState(false);
 
@@ -51,65 +63,80 @@ const PaymentModal = ({ onNext }) => {
             p: 2,
           }}
         >
+            <IconButton
+  onClick={onClose}
+  sx={{
+    position: 'absolute',
+    top: 16,
+    left: 16,
+    color: '#2f6b5f',
+    backgroundColor: '#e0f2f1',
+    '&:hover': {
+      backgroundColor: '#c8e6c9',
+    },
+  }}
+>
+  <CloseIcon />
+</IconButton>
+
           <Paper
             elevation={4}
             sx={{
               width: '100%',
               maxWidth: 480,
               borderRadius: 4,
-              p: 4,
+              p: isMobile ? 2 : 4,
               bgcolor: '#ffffff',
               position: 'relative',
               fontFamily: 'Nunito, sans-serif',
             }}
           >
             <Typography
-              variant="h5"
-              sx={{ fontWeight: 800, color: '#2f6b5f', mb: 3, textAlign: 'center' }}
+              variant={isMobile ? 'h6' : 'h5'}
+              sx={{
+                fontWeight: 800,
+                color: '#2f6b5f',
+                mb: isMobile ? 2 : 3,
+                textAlign: 'center',
+              }}
             >
               Select Payment Method
             </Typography>
 
-            <Stack direction="row" spacing={2} justifyContent="center" sx={{ mb: 3 }}>
-              <Button
-                variant={cashOrUpi === 'Cash' ? 'contained' : 'outlined'}
-                onClick={() => paymentMethod('Cash')}
-                sx={{
-                  minWidth: 120,
-                  borderRadius: 2,
-                  fontWeight: 600,
-                  textTransform: 'none',
-                  bgcolor: cashOrUpi === 'Cash' ? '#2f6b5f' : 'transparent',
-                  color: cashOrUpi === 'Cash' ? '#fff' : '#2f6b5f',
-                  borderColor: '#2f6b5f',
-                  '&:hover': {
-                    bgcolor: cashOrUpi === 'Cash' ? '#417c70' : '#edf8f6',
-                  },
-                }}
-              >
-                💵 Cash
-              </Button>
-
-              <Button
-                variant={cashOrUpi === 'UPI' ? 'contained' : 'outlined'}
-                onClick={() => paymentMethod('UPI')}
-                sx={{
-                  minWidth: 160,
-                  borderRadius: 2,
-                  fontWeight: 600,
-                  textTransform: 'none',
-                  bgcolor: cashOrUpi === 'UPI' ? '#2f6b5f' : 'transparent',
-                  color: cashOrUpi === 'UPI' ? '#fff' : '#2f6b5f',
-                  borderColor: '#2f6b5f',
-                  '&:hover': {
-                    bgcolor: cashOrUpi === 'UPI' ? '#417c70' : '#edf8f6',
-                  },
-                }}
-              >
-                📱 UPI Transaction
-              </Button>
+            <Stack
+              direction={isMobile ? 'column' : 'row'}
+              spacing={2}
+              justifyContent="center"
+              sx={{ mb: 3 }}
+            >
+              {['Cash', 'UPI', 'CashUPI'].map((method) => (
+                <Button
+                  key={method}
+                  variant={cashOrUpi === method ? 'contained' : 'outlined'}
+                  onClick={() => paymentMethod(method)}
+                  sx={{
+                    minWidth: 120,
+                    borderRadius: 2,
+                    fontWeight: 600,
+                    textTransform: 'none',
+                    bgcolor: cashOrUpi === method ? '#2f6b5f' : 'transparent',
+                    color: cashOrUpi === method ? '#fff' : '#2f6b5f',
+                    borderColor: '#2f6b5f',
+                    '&:hover': {
+                      bgcolor: cashOrUpi === method ? '#417c70' : '#edf8f6',
+                    },
+                  }}
+                >
+                  {method === 'Cash'
+                    ? '💵 Cash'
+                    : method === 'UPI'
+                    ? '📱 UPI'
+                    : 'Cash ➕UPI'}
+                </Button>
+              ))}
             </Stack>
 
+            {/* --- UPI QR --- */}
             {cashOrUpi === 'UPI' && totalPrice > 0 && (
               <Box sx={{ textAlign: 'center', my: 4 }}>
                 <Typography
@@ -121,8 +148,8 @@ const PaymentModal = ({ onNext }) => {
 
                 <QRCodeSVG
                   value={`upi://pay?pa=akarshmt-1@okicici&pn=Akarsh&am=${totalPrice}&cu=INR`}
-                  width={200}
-                  height={200}
+                  width={180}
+                  height={180}
                   fgColor="#2f6b5f"
                   bgColor="#ffffff"
                   level="H"
@@ -130,36 +157,144 @@ const PaymentModal = ({ onNext }) => {
               </Box>
             )}
 
+            {/* --- Cash + UPI Split --- */}
+            {cashOrUpi === 'CashUPI' && totalPrice > 0 && (
+              <Box sx={{ textAlign: 'center', my: 4 }}>
+                {!showSplitQR ? (
+                  <>
+                    <TextField
+                      label="Enter UPI Amount"
+                      variant="outlined"
+                      type="number"
+                      inputProps={{ min: 0 }}
+                      value={splitUPI}
+                      onChange={(e) => setSplitUPI(e.target.value)}
+                      fullWidth
+                      required
+                      InputProps={{
+                        sx: {
+                          borderRadius: '12px',
+                          backgroundColor: '#fff',
+                          fontSize: '1rem',
+                        },
+                      }}
+                    />
+
+                    <Button
+                      variant="contained"
+                      sx={{
+                        mt: 2,
+                        backgroundColor: '#2f6b5f',
+                        '&:hover': { backgroundColor: '#6ca499ff' },
+                        fontWeight: 600,
+                        borderRadius: '12px',
+                        py: 1.2,
+                        fontSize: '1rem',
+                      }}
+                      fullWidth
+                      onClick={() => {
+                        const upiAmount = parseFloat(splitUPI);
+                        if (!upiAmount || isNaN(upiAmount)) {
+                          alert("Please enter a valid UPI amount.");
+                          return;
+                        }
+                        if (upiAmount <= totalPrice) {
+                          setSplitMSG(
+                            `₹${upiAmount} to be paid via UPI and ₹${totalPrice - upiAmount
+                            } to be paid in Cash.`
+                          );
+                          setShowSplitQR(true);
+                        } else {
+                          setSplitMSG(
+                            `Split amount cannot exceed total price ₹${totalPrice}. ₹${upiAmount} is too high.`
+                          );
+                          setSplitUPI(0);
+                        }
+                      }}
+                    >
+                      Next
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ color: '#2f6b5f', fontWeight: 600, mb: 1 }}
+                    >
+                      Scan to Pay (₹{splitUPI})
+                    </Typography>
+
+                    <QRCodeSVG
+                      value={`upi://pay?pa=akarshmt-1@okicici&pn=Akarsh&am=${splitUPI}&cu=INR`}
+                      width={180}
+                      height={180}
+                      fgColor="#2f6b5f"
+                      bgColor="#ffffff"
+                      level="H"
+                    />
+                       <Typography
+                      variant="subtitle1"
+                      sx={{ color: '#2f6b5f', fontWeight: 300, mb: 1 }}
+                    >
+{splitMSG}                    </Typography>
+                       <Button
+                  variant="contained"
+                  fullWidth
+                  disabled={!addButtonClicked}
+                  onClick={() => {
+                    if (cashOrUpi) setShowConfirmPopup(true);
+                  }}
+                  sx={{
+                    backgroundColor: addButtonClicked ? '#2f6b5f' : '#bdbdbd',
+                    color: '#fff',
+                    borderRadius: 2,
+                    fontWeight: 700,
+                    fontSize: '1rem',
+                    py: 1.3,
+                    textTransform: 'none',
+                    '&:hover': {
+                      backgroundColor: addButtonClicked ? '#417c70' : '#bdbdbd',
+                    },
+                  }}
+                >
+                  Confirm Payment →
+                </Button>
+                  </>
+                )}
+              </Box>
+            )}
+
             <Divider sx={{ my: 3 }} />
 
-            <Box textAlign="center">
-              <Button
-                variant="contained"
-                fullWidth
-                disabled={!addButtonClicked}
-                onClick={() => {
-                  if (cashOrUpi) {
-                    setShowConfirmPopup(true);
-                  }
-                }}
-                sx={{
-                  backgroundColor: addButtonClicked ? '#2f6b5f' : '#bdbdbd',
-                  color: '#fff',
-                  borderRadius: 2,
-                  fontWeight: 700,
-                  fontSize: '1rem',
-                  py: 1.3,
-                  textTransform: 'none',
-                  '&:hover': {
-                    backgroundColor: addButtonClicked ? '#417c70' : '#bdbdbd',
-                  },
-                }}
-              >
-                Confirm Payment →
-              </Button>
-            </Box>
+            {/* Confirm Button (if not CashUPI) */}
+            {cashOrUpi !== 'CashUPI' && (
+              <Box textAlign="center">
+                <Button
+                  variant="contained"
+                  fullWidth
+                  disabled={!addButtonClicked}
+                  onClick={() => {
+                    if (cashOrUpi) setShowConfirmPopup(true);
+                  }}
+                  sx={{
+                    backgroundColor: addButtonClicked ? '#2f6b5f' : '#bdbdbd',
+                    color: '#fff',
+                    borderRadius: 2,
+                    fontWeight: 700,
+                    fontSize: '1rem',
+                    py: 1.3,
+                    textTransform: 'none',
+                    '&:hover': {
+                      backgroundColor: addButtonClicked ? '#417c70' : '#bdbdbd',
+                    },
+                  }}
+                >
+                  Confirm Payment →
+                </Button>
+              </Box>
+            )}
 
-            {/* Confirm Popup Modal */}
+            {/* Confirm Modal */}
             {showConfirmPopup && (
               <Modal open onClose={() => setShowConfirmPopup(false)}>
                 <Fade in>
