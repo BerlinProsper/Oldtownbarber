@@ -143,7 +143,7 @@ function AddServices() {
                 value={price}
                 onChange={handleChange}
                 fullWidth
-                type="number"
+                type='number'
                 required
                 inputProps={{ min: '0', step: '0.01' }}
                 InputProps={{
