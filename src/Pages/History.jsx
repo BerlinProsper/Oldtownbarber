@@ -19,7 +19,6 @@ const TodayHistory = () => {
   const [tab, setTab] = useState("today");
   const pdfRef = useRef();
 
-  // Inject responsive and PDF styles
   useEffect(() => {
     const style = document.createElement("style");
     style.innerHTML = `
@@ -32,7 +31,6 @@ const TodayHistory = () => {
         input, button { font-size: 14px !important; }
         .tab-buttons { flex-direction: column; gap: 10px; }
       }
-
       .pdf-mode {
         background: #fff !important;
         color: #000 !important;
@@ -41,7 +39,6 @@ const TodayHistory = () => {
         padding: 0 !important;
         margin: 0 !important;
       }
-
       .pdf-mode * {
         background: none !important;
         color: #000 !important;
@@ -51,7 +48,6 @@ const TodayHistory = () => {
         border: none !important;
         box-shadow: none !important;
       }
-
       .pdf-mode li {
         display: flex !important;
         justify-content: space-between !important;
@@ -62,19 +58,16 @@ const TodayHistory = () => {
         padding: 2px 0 !important;
         font-size: 8px !important;
       }
-
       .pdf-mode li > div {
         flex: 1;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
-
       .pdf-mode .tab-buttons,
       .pdf-mode button {
         display: none !important;
       }
-
       .pdf-mode h2, .pdf-mode h3, .pdf-mode h4 {
         font-size: 10px !important;
         font-weight: bold;
@@ -86,7 +79,6 @@ const TodayHistory = () => {
     return () => document.head.removeChild(style);
   }, []);
 
-  // Fetch today's data
   useEffect(() => {
     async function loadHistory() {
       const today = new Date();
@@ -151,6 +143,17 @@ const TodayHistory = () => {
     input.classList.remove("pdf-mode");
   };
 
+  const formatServiceNames = (services) => {
+    const nameCount = {};
+    services.forEach((s) => {
+      nameCount[s.name] = (nameCount[s.name] || 0) + 1;
+    });
+
+    return Object.entries(nameCount)
+      .map(([name, count]) => (count > 1 ? `${name} x${count}` : name))
+      .join(", ");
+  };
+
   if (loading) {
     return <div style={{ textAlign: "center", padding: "2rem" }}>Loading...</div>;
   }
@@ -160,14 +163,15 @@ const TodayHistory = () => {
       style={{
         minHeight: "100vh",
         background: "#bce6ddff",
-        padding: "2rem",
+        padding: "1.5rem",
         borderRadius: "10px",
         boxShadow: "0 3px 12px rgba(102, 73, 49, 0.15)",
         color: "#2f6b5f",
         fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+        fontSize: "0.85rem",
       }}
     >
-      <h2 style={{ textAlign: "center" }}>Recent Records</h2>
+      <h2 style={{ textAlign: "center", fontSize: "1.3rem" }}>Recent Records</h2>
 
       <div
         className="tab-buttons"
@@ -179,156 +183,111 @@ const TodayHistory = () => {
           justifyContent: "center",
         }}
       >
-        <button
-          onClick={() => setTab("today")}
-          style={{
-            padding: "0.6rem 1.2rem",
-            backgroundColor: tab === "today" ? "#2f6b5f" : "#e7f1efff",
-            color: tab === "today" ? "#baddd6ff" : "#1f5b4fff",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-            fontWeight: "bold",
-          }}
-        >
-          Today's Records
-        </button>
-        <button
-          onClick={() => setTab("week")}
-          style={{
-            padding: "0.6rem 1.2rem",
-            backgroundColor: tab === "week" ? "#2f6b5f" : "#e4f8f4ff",
-            color: tab === "week" ? "#d3efe9ff" : "#2f6b5f",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-            fontWeight: "bold",
-          }}
-        >
-          Weekly Records
-        </button>
-        <button
-          onClick={() => setTab("month")}
-          style={{
-            padding: "0.6rem 1.2rem",
-            backgroundColor: tab === "month" ? "#2f6b5f" : "#e4f8f4ff",
-            color: tab === "month" ? "#d3efe9ff" : "#2f6b5f",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-            fontWeight: "bold",
-          }}
-        >
-          Monthly Records
-        </button>
+        {["today", "week", "month"].map((label) => (
+          <button
+            key={label}
+            onClick={() => setTab(label)}
+            style={{
+              padding: "0.5rem 1rem",
+              backgroundColor: tab === label ? "#2f6b5f" : "#e7f1ef",
+              color: tab === label ? "#baddd6ff" : "#1f5b4fff",
+              border: "none",
+              borderRadius: "6px",
+              cursor: "pointer",
+              fontWeight: "bold",
+              fontSize: "0.8rem",
+            }}
+          >
+            {label.charAt(0).toUpperCase() + label.slice(1)} Records
+          </button>
+        ))}
       </div>
 
       <div ref={pdfRef}>
         {tab === "today" ? (
           <div>
-        <h2>Today's Records</h2>
-<p style={{ fontSize: '0.9rem', color: '#2f5b6f', marginTop: '4px' }}>
-  {new Date().toLocaleDateString('en-IN', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })}
-</p>
+            <h2 style={{ fontSize: "1.1rem" }}>Today's Records</h2>
+            <strong style={{ fontSize: '0.85rem', color: '#2f5b6f', marginTop: '4px' }}>
+              {new Date().toLocaleDateString('en-IN', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </strong>
 
-
-                <ul style={{ listStyle: "none", padding: 0 }}>
-            {history.map(item => (
-              <li
-                key={item.id}
-                style={{
-                  background: "#e4f4f1ff",
-                  padding: "1rem",
-                  marginBottom: "1rem",
-                  borderRadius: "8px",
-                  boxShadow: "0 2px 8px rgba(166, 123, 91, 0.15)",
-                  border: "1px solid #639d92ff",
-                  color: "#2f6b5f",
-                  lineHeight: "1.5",
-                  fontSize: "1rem"
-                }}
-              >
-                <div
+            <ul style={{ listStyle: "none", padding: 0 }}>
+              {history.map((item) => (
+                <li
+                  key={item.id}
                   style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    flexWrap: "wrap",
-                    rowGap: "0.5rem",
+                    background: "#e4f4f1",
+                    padding: "0.75rem",
+                    marginBottom: "0.75rem",
+                    borderRadius: "8px",
+                    boxShadow: "0 2px 6px rgba(166, 123, 91, 0.1)",
+                    border: "1px solid #639d92ff",
+                    color: "#2f6b5f",
+                    fontSize: "0.85rem",
                   }}
                 >
-                  <div style={{ flex: "1 1 100%" }}>
-                    <span style={{ fontWeight: "600" }}>Services: </span>
-                    <span>{item.services.map(s => s.name).join(", ")}</span>
-                  </div>
-                  <div style={{ flex: "1 1 100%" }}>
-                    <span style={{ fontWeight: "600" }}>Date: </span>
-                    <span>{item.timestamp?.toDate().toLocaleString()}</span>
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    flexWrap: "wrap",
-                    marginTop: "0.5rem"
-                  }}
-                >
-                  <div>
-                    <span style={{ fontWeight: "600" }}>Price: </span>
-                    <span>{`₹${item.price}`}</span>
-                  </div>
- {item.payment === "CashUPI" && item.cash_plus_upi ? (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                     <div>
-                      <span style={{ fontWeight: "600" }}>{item.cash_plus_upi} UPI + {item.price - item.cash_plus_upi} Cash Payment </span>
+                      <strong>Services: </strong>
+                      {formatServiceNames(item.services || [])}
                     </div>
-                  ) :   <div>
-                    <span style={{ fontWeight: "600" }}>{item.payment} Payment</span>
-                  </div>}
+                    <div>
+                      <strong>Date: </strong>
+                      {item.timestamp?.toDate().toLocaleString()}
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginTop: "0.25rem" }}>
+                      <span>
+                        <strong>Price:</strong> ₹{item.price}
+                      </span>
+                      {item.payment === "CashUPI" && item.cash_plus_upi ? (
+                        <span>
+                          <strong>Payment:</strong> ₹{item.cash_plus_upi} UPI + ₹
+                          {item.price - item.cash_plus_upi} Cash
+                        </span>
+                      ) : (
+                        <span>
+                          <strong>Payment:</strong> {item.payment}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
 
-
-                
-                </div>
-              </li>
-            ))}
-          </ul>
-
-            <h3 style={{ marginTop: "2rem" }}>
+            <h3 style={{ marginTop: "2rem", fontSize: "1rem" }}>
               Total Collection: ₹
               {history.reduce((sum, item) => sum + (item.price || 0), 0)}
             </h3>
-            <h4>
-              <br />
-              <span style={{ fontWeight: 600, color: "#4a7c6b" }}>
-                Total payment in cash: ₹{history
-  .filter((item) => item.payment === "Cash" || item.payment === "CashUPI")
-  .reduce((sum, item) => {
-    if (item.payment === "CashUPI") {
-      return sum + ((item.price || 0) - (item.cash_plus_upi || 0));
-    } else {
-      return sum + (item.price || 0);
-    }
-  }, 0)}
 
+            <h4 style={{ fontSize: "0.9rem", marginTop: "0.5rem" }}>
+              <span style={{ fontWeight: 600, color: "#4a7c6b" }}>
+                Total payment in cash: ₹
+                {history
+                  .filter((item) => item.payment === "Cash" || item.payment === "CashUPI")
+                  .reduce((sum, item) => {
+                    if (item.payment === "CashUPI") {
+                      return sum + ((item.price || 0) - (item.cash_plus_upi || 0));
+                    }
+                    return sum + (item.price || 0);
+                  }, 0)}
               </span>
               <br />
               <span style={{ fontWeight: 600, color: "#4a7c6b" }}>
-          Total payment via UPI: ₹{history
-  .filter((item) => item.payment === "UPI" || item.payment === "CashUPI")
-  .reduce((sum, item) => {
-    if (item.payment === "CashUPI") {
-      return sum + Number(item.cash_plus_upi || 0);
-    } else {
-      return sum + Number(item.price || 0);
-    }
-  }, 0)}
-
-
+                Total payment via UPI: ₹
+                {history
+                  .filter((item) => item.payment === "UPI" || item.payment === "CashUPI")
+                  .reduce((sum, item) => {
+                    if (item.payment === "CashUPI") {
+                      return sum + Number(item.cash_plus_upi || 0);
+                    }
+                    return sum + Number(item.price || 0);
+                  }, 0)}
               </span>
             </h4>
           </div>
@@ -343,12 +302,13 @@ const TodayHistory = () => {
         <button
           onClick={handleDownloadPDF}
           style={{
-            padding: "0.6rem 1.2rem",
+            padding: "0.5rem 1rem",
             background: "#2f6b5f",
             color: "white",
             border: "none",
             borderRadius: "5px",
             cursor: "pointer",
+            fontSize: "0.85rem",
           }}
         >
           Download PDF

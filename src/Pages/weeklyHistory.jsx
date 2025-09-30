@@ -1,173 +1,195 @@
-
-import { getFirestore, collection, query, where, orderBy, getDocs, Timestamp } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  orderBy,
+  query,
+  Timestamp,
+  where,
+} from "firebase/firestore";
 import { db } from "../Firebase";
 import React, { useEffect, useState } from "react";
-import {
-  Box,
+import { Box } from "@mui/material";
 
-} from '@mui/material';
 const WeeklyHistory = () => {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [Total, setTotal] = useState(0);
+
   useEffect(() => {
-  async function loadWeeklyHistory() {
-    const today = new Date();
+    async function loadWeeklyHistory() {
+      const today = new Date();
+      const dayOfWeek = today.getDay();
 
-    // Get the day of the week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
-    const dayOfWeek = today.getDay();
+      const lastSunday = new Date(today);
+      lastSunday.setDate(today.getDate() - dayOfWeek);
+      lastSunday.setHours(0, 0, 0, 0);
 
-    // Calculate the date of last Sunday
-    const lastSunday = new Date(today);
-    lastSunday.setDate(today.getDate() - dayOfWeek);
-    lastSunday.setHours(0, 0, 0, 0); // Set to 12:00 AM
+      const now = new Date();
 
-    // End time is now
-    const now = new Date();
+      const q = query(
+        collection(db, "historyservices"),
+        where("timestamp", ">=", Timestamp.fromDate(lastSunday)),
+        where("timestamp", "<=", Timestamp.fromDate(now)),
+        orderBy("timestamp", "desc")
+      );
 
-    // Firestore query
-    const q = query(
-      collection(db, "historyservices"),
-      where("timestamp", ">=", Timestamp.fromDate(lastSunday)),
-      where("timestamp", "<=", Timestamp.fromDate(now)),
-      orderBy("timestamp", "desc")
+      const querySnapshot = await getDocs(q);
+      const data = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      setHistory(data);
+      setLoading(false);
+    }
+
+    loadWeeklyHistory();
+  }, []);
+
+  const formatServiceNames = (services) => {
+    const nameCount = {};
+    services.forEach((s) => {
+      nameCount[s.name] = (nameCount[s.name] || 0) + 1;
+    });
+
+    return Object.entries(nameCount)
+      .map(([name, count]) => (count > 1 ? `${name} ×${count}` : name))
+      .join(", ");
+  };
+
+  const options = { year: "numeric", month: "long", day: "numeric" };
+  const today = new Date();
+  const dayOfWeek = today.getDay();
+  const lastSunday = new Date(today);
+  lastSunday.setDate(today.getDate() - dayOfWeek);
+  lastSunday.setHours(0, 0, 0, 0);
+
+  if (loading)
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: 200,
+        }}
+      >
+        <svg width="48" height="48" viewBox="0 0 50 50">
+          <circle
+            cx="25"
+            cy="25"
+            r="20"
+            fill="none"
+            stroke="#6dada0ff"
+            strokeWidth="5"
+            strokeDasharray="31.415, 31.415"
+            transform="rotate(72.0001 25 25)"
+          >
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              from="0 25 25"
+              to="360 25 25"
+              dur="1s"
+              repeatCount="indefinite"
+            />
+          </circle>
+        </svg>
+      </Box>
     );
 
-    const querySnapshot = await getDocs(q);
-    const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-    setHistory(data);
-
-    const totalPrice = data.reduce((sum, item) => sum + (item.price || 0), 0);
-    setTotal(totalPrice);
-
-    setLoading(false);
-  }
-
-  loadWeeklyHistory();
-}, []);
-const today = new Date();
-const dayOfWeek = today.getDay();
-const lastSunday = new Date(today);
-lastSunday.setDate(today.getDate() - dayOfWeek);
-lastSunday.setHours(0, 0, 0, 0);
-
-const options = { year: 'numeric', month: 'long', day: 'numeric' };
-
-
-  if (loading) return<Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            minHeight: 200,
-          }}
-        >
-          <svg width="48" height="48" viewBox="0 0 50 50">
-            <circle
-              cx="25"
-              cy="25"
-              r="20"
-              fill="none"
-              stroke="#6dada0ff"
-              strokeWidth="5"
-              strokeDasharray="31.415, 31.415"
-              transform="rotate(72.0001 25 25)"
-            >
-              <animateTransform
-                attributeName="transform"
-                type="rotate"
-                from="0 25 25"
-                to="360 25 25"
-                dur="1s"
-                repeatCount="indefinite"
-              />
-            </circle>
-          </svg>
-        </Box>
-
   return (
-        <div>
-          <h2 style={{ color: "#2f6b5f", marginBottom: "1rem" }}>
-            Weekly  Records
-          </h2>
-          <p style={{ color: "#4a7c6b", fontWeight: 500, marginBottom: "1.5rem" }}>
-  Records from last Sunday: <strong>{lastSunday.toLocaleDateString(undefined, options)}</strong>
-</p>
+    <div style={{ fontSize: "0.85rem", color: "#2f6b5f" }}>
+      <h2 style={{ marginBottom: "1rem", fontSize: "1.2rem" }}>
+        Weekly Records
+      </h2>
+      <p
+        style={{
+          color: "#4a7c6b",
+          fontWeight: 500,
+          marginBottom: "1.5rem",
+        }}
+      >
+        Records from last Sunday:{" "}
+        <strong>{lastSunday.toLocaleDateString(undefined, options)}</strong>
+      </p>
 
-          <ul style={{ listStyle: "none", padding: 0 }}>
-            {history.map(item => (
-              <li
-                key={item.id}
-                style={{
-                  background: "#e4f4f1ff",
-                  padding: "1rem",
-                  marginBottom: "1rem",
-                  borderRadius: "8px",
-                  boxShadow: "0 2px 8px rgba(166, 123, 91, 0.15)",
-                  border: "1px solid #639d92ff",
-                  color: "#2f6b5f",
-                  lineHeight: "1.5",
-                  fontSize: "1rem"
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    flexWrap: "wrap",
-                    rowGap: "0.5rem",
-                  }}
-                >
-                  <div style={{ flex: "1 1 100%" }}>
-                    <span style={{ fontWeight: "600" }}>Services: </span>
-                    <span>{item.services.map(s => s.name).join(", ")}</span>
-                  </div>
-                  <div style={{ flex: "1 1 100%" }}>
-                    <span style={{ fontWeight: "600" }}>Date: </span>
-                    <span>{item.timestamp?.toDate().toLocaleString()}</span>
-                  </div>
-                </div>
+      <ul style={{ listStyle: "none", padding: 0 }}>
+        {history.map((item) => (
+          <li
+            key={item.id}
+            style={{
+              background: "#e4f4f1",
+              padding: "0.75rem",
+              marginBottom: "0.75rem",
+              borderRadius: "8px",
+              boxShadow: "0 2px 6px rgba(166, 123, 91, 0.1)",
+              border: "1px solid #639d92ff",
+              fontSize: "0.85rem",
+            }}
+          >
+            <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+              <div>
+                <strong>Services: </strong>
+                {formatServiceNames(item.services || [])}
+              </div>
+              <div>
+                <strong>Date: </strong>
+                {item.timestamp?.toDate().toLocaleString()}
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span>
+                  <strong>Price: </strong>₹{item.price}
+                </span>
+                <span>
+                  <strong>Payment: </strong>
+                  {item.payment === "CashUPI" && item.cash_plus_upi ? (
+                    <>
+                      ₹{item.cash_plus_upi} UPI + ₹
+                      {item.price - item.cash_plus_upi} Cash
+                    </>
+                  ) : (
+                    item.payment
+                  )}
+                </span>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
 
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    flexWrap: "wrap",
-                    marginTop: "0.5rem"
-                  }}
-                >
-                  <div>
-                    <span style={{ fontWeight: "600" }}>Price: </span>
-                    <span>{`₹${item.price}`}</span>
-                  </div>
-                  <div>
-                    <span style={{ fontWeight: "600" }}>{item.payment} Payment</span>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
+      <h3 style={{ marginTop: "2rem", fontSize: "1rem" }}>
+        Total Collection: ₹
+        {history.reduce((sum, item) => sum + (item.price || 0), 0)}
+      </h3>
 
-          <h3 style={{ marginTop: "2rem", color: "#2f6b5f" }}>
-            Total Collection: ₹
-            {history.reduce((sum, item) => sum + (item.price || 0), 0)}
-                      </h3>
-<h4>
-            <br />
-            <span style={{ fontWeight: 600, color: "#4a7c6b" }}>
-              Total payment in cash: ₹
-              {history.filter(item => item.payment === "Cash").reduce((sum, item) => sum + (item.price || 0), 0)}
-              
-            </span>
-             <br />
-            <span style={{ fontWeight: 600, color: "#4a7c6b" }}>
-              Total payment via UPI: ₹
-              {history.filter(item => item.payment === "UPI").reduce((sum, item) => sum + (item.price || 0), 0)}
-              
-            </span>
-            </h4>
-        </div>
+      <h4 style={{ fontSize: "0.9rem", marginTop: "0.5rem" }}>
+        <span style={{ fontWeight: 600, color: "#4a7c6b" }}>
+          Total payment in cash: ₹
+          {history
+            .filter((item) => item.payment === "Cash" || item.payment === "CashUPI")
+            .reduce((sum, item) => {
+              if (item.payment === "CashUPI") {
+                return sum + ((item.price || 0) - (item.cash_plus_upi || 0));
+              } else {
+                return sum + (item.price || 0);
+              }
+            }, 0)}
+        </span>
+        <br />
+        <span style={{ fontWeight: 600, color: "#4a7c6b" }}>
+          Total payment via UPI: ₹
+          {history
+            .filter((item) => item.payment === "UPI" || item.payment === "CashUPI")
+            .reduce((sum, item) => {
+              if (item.payment === "CashUPI") {
+                return sum + Number(item.cash_plus_upi || 0);
+              } else {
+                return sum + Number(item.price || 0);
+              }
+            }, 0)}
+        </span>
+      </h4>
+    </div>
   );
 };
 
