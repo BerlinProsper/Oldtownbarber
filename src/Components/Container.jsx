@@ -14,6 +14,8 @@ import {
   InputBase
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 import CIcon from '@coreui/icons-react';
 import * as icon from '@coreui/icons';
 import { useServiceContext } from '../Context/MyContext';
@@ -34,72 +36,61 @@ function Container() {
   const [customClickId, setCustomClickId] = useState(null);
   const [customPrice, setCustomPrice] = useState('');
 
-const handleCustomPriceSubmit = (service) => {
-  const price = parseInt(customPrice);
-  if (!isNaN(price) && price > 0) {
-    // Clone and update price locally
-    const updatedService = { ...service, price };
+  const handleCustomPriceSubmit = (service) => {
+    const price = parseInt(customPrice);
+    if (!isNaN(price) && price > 0) {
+      const updatedService = { ...service, price };
+      setSelectedService(prev => [...prev, updatedService]);
+      setTotalPrice(prev => prev + price);
 
-    // Add to selectedService
-    setSelectedService(prev => [...prev, updatedService]);
-    setTotalPrice(prev => prev + price);
+      const index = services.findIndex(s => s.id === service.id);
+      if (index !== -1) {
+        services[index].price = price;
+      }
 
-    // Update the original service in the services array (optional: if you control that state)
-    const index = services.findIndex(s => s.id === service.id);
-    if (index !== -1) {
-      services[index].price = price; // Direct mutation since services isn't in state
+      setCustomClickId(null);
+      setCustomPrice('');
     }
-
-    // Reset input UI
-    setCustomClickId(null);
-    setCustomPrice('');
-  }
-};
-
+  };
 
   const handleServiceClick = (service) => {
-    const isAlreadySelected = selectedService.some((s) => s.id === service.id);
+    if (service.price === 0) {
+      setCustomClickId(service.id);
+      return;
+    }
 
-    if (isAlreadySelected) {
-      const matched = selectedService.find((s) => s.id === service.id);
-      if (matched && matched.price > 0) {
-        setTotalPrice(prev => Math.max(0, prev - matched.price));
-      }
+    setSelectedService(prev => [...prev, service]);
+    setTotalPrice(prev => prev + service.price);
 
-      setSelectedService(prev => prev.filter((s) => s.id !== service.id));
+    if (service.freeServices?.length > 0) {
+      const freeNames = service.freeServices.map(f => f.name.trim().toLowerCase());
+      const matchedFree = services.filter(
+        (s) =>
+          freeNames.includes(s.name.trim().toLowerCase()) &&
+          !selectedService.some(sel => sel.id === s.id)
+      );
+      const freeVersion = matchedFree.map((s) => ({
+        ...s,
+        price: 0,
+        isFree: true,
+        sourceServiceId: service.id,
+      }));
+      setSelectedService(prev => [...prev, ...freeVersion]);
+    }
+  };
 
-      if (service.freeServices?.length > 0) {
-        const freeNames = service.freeServices.map(f => f.name.trim().toLowerCase());
-        setSelectedService(prev =>
-          prev.filter(
-            (s) => !(s.price === 0 && freeNames.includes(s.name.trim().toLowerCase()))
-          )
-        );
-      }
-    } else {
-      if (service.price === 0) {
-        setCustomClickId(service.id);
-        return;
-      }
+  const handleIncrement = (service) => {
+    setSelectedService(prev => [...prev, service]);
+    setTotalPrice(prev => prev + service.price);
+  };
 
-      setSelectedService(prev => [...prev, service]);
-      setTotalPrice(prev => prev + service.price);
-
-      if (service.freeServices?.length > 0) {
-        const freeNames = service.freeServices.map(f => f.name.trim().toLowerCase());
-        const matchedFree = services.filter(
-          (s) =>
-            freeNames.includes(s.name.trim().toLowerCase()) &&
-            !selectedService.some(sel => sel.id === s.id)
-        );
-        const freeVersion = matchedFree.map((s) => ({
-          ...s,
-          price: 0,
-          isFree: true,
-          sourceServiceId: service.id,
-        }));
-        setSelectedService(prev => [...prev, ...freeVersion]);
-      }
+  const handleDecrement = (service) => {
+    const index = selectedService.findIndex(s => s.id === service.id);
+    if (index !== -1) {
+      const updated = [...selectedService];
+      updated.splice(index, 1);
+      setSelectedService(updated);
+      setTotalPrice(prev => Math.max(0, prev - service.price));
     }
   };
 
@@ -170,7 +161,8 @@ const handleCustomPriceSubmit = (service) => {
                 );
               })
               .map((service) => {
-                const isSelected = selectedService.some((s) => s.id === service.id);
+                const count = selectedService.filter((s) => s.id === service.id).length;
+                const isSelected = count > 0;
                 const isCustomSelected = customClickId === service.id;
 
                 return (
@@ -221,32 +213,58 @@ const handleCustomPriceSubmit = (service) => {
                           boxSizing: 'border-box',
                         }}
                       >
-                        <Stack
-                          direction="row"
-                          alignItems="center"
-                          justifyContent="space-between"
-                          spacing={2}
-                        >
-                          <Avatar
-                            sx={{
-                              bgcolor: isSelected ? '#2f6b5f' : '#ccd6dd',
-                              color: '#fff',
-                              width: 44,
-                              height: 44,
-                              fontWeight: 600,
-                              fontSize: '1rem',
-                              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                            }}
-                          >
-                            {service.name[0].toUpperCase()}
-                          </Avatar>
-                          <IconButton>
-                            {isSelected ? (
-                              <span style={{ color: '#2c655a', fontSize: 24 }}>✓</span>
-                            ) : (
-                              <CIcon icon={icon.cilCart} size="lg" />
+                        <Stack direction="row" alignItems="center" justifyContent="space-between">
+                          <Stack position="relative" sx={{ width: 'fit-content' }}>
+                            <Avatar
+                              sx={{
+                                bgcolor: isSelected ? '#2f6b5f' : '#ccd6dd',
+                                color: '#fff',
+                                width: 44,
+                                height: 44,
+                                fontWeight: 600,
+                                fontSize: '1rem',
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                              }}
+                            >
+                              {service.name[0].toUpperCase()}
+                            </Avatar>
+
+                            {count > 0 && (
+                              <Box
+                                sx={{
+                                  position: 'absolute',
+                                  top: -4,
+                                  right: -4,
+                                  backgroundColor: '#f44336',
+                                  color: '#fff',
+                                  fontSize: '0.7rem',
+                                  fontWeight: 'bold',
+                                  borderRadius: '50%',
+                                  width: 18,
+                                  height: 18,
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                                }}
+                              >
+                                {count}
+                              </Box>
                             )}
-                          </IconButton>
+                          </Stack>
+
+
+{count > 0 && (
+  <Stack direction="row" spacing={1}>
+    <IconButton size="small" onClick={(e) => { e.stopPropagation(); handleDecrement(service); }}>
+      <RemoveIcon fontSize="small" />
+    </IconButton>
+    <IconButton size="small" onClick={(e) => { e.stopPropagation(); handleIncrement(service); }}>
+      <AddIcon fontSize="small" />
+    </IconButton>
+  </Stack>
+)}
+
                         </Stack>
 
                         <Typography
@@ -262,69 +280,65 @@ const handleCustomPriceSubmit = (service) => {
                         </Typography>
 
                         {isCustomSelected ? (
-                        <Box
-  onClick={(e) => e.stopPropagation()}
-  sx={{
-    mt: 1,
-    display: 'flex',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    border: '1px solid #ccd6dd',
-    borderRadius: '10px',
-    px: 1.5,
-    py: 0.5,
-    boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.05)',
-  }}
->
-  <InputBase
-    value={customPrice}
-    onChange={(e) => setCustomPrice(e.target.value)}
-    type="number"
-    inputProps={{
-      min: 1,
-      style: {
-        textAlign: 'center',
-        width: '60px',
-        fontWeight: 'bold',
-        fontSize: '0.9rem',
-        color: '#2f6b5f',
-      },
-    }}
-    placeholder="₹0"
-    onClick={(e) => e.stopPropagation()}
-    onKeyDown={(e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        handleCustomPriceSubmit(service);
-      }
-    }}
-    sx={{
-      flex: 1,
-      mr: 1,
-    }}
-  />
-  <Button
-    onClick={(e) => {
-      e.stopPropagation();
-      handleCustomPriceSubmit(service);
-    }}
-    size="small"
-    variant="contained"
-    sx={{
-      fontSize: '0.75rem',
-      px: 2,
-      py: 0.5,
-      borderRadius: '8px',
-      backgroundColor: '#2f6b5f',
-      color: '#fff',
-      textTransform: 'none',
-      '&:hover': { backgroundColor: '#3c7089' },
-    }}
-  >
-    Add
-  </Button>
-</Box>
-
+                          <Box
+                            onClick={(e) => e.stopPropagation()}
+                            sx={{
+                              mt: 1,
+                              display: 'flex',
+                              alignItems: 'center',
+                              backgroundColor: '#fff',
+                              border: '1px solid #ccd6dd',
+                              borderRadius: '10px',
+                              px: 1.5,
+                              py: 0.5,
+                              boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.05)',
+                            }}
+                          >
+                            <InputBase
+                              value={customPrice}
+                              onChange={(e) => setCustomPrice(e.target.value)}
+                              type="number"
+                              inputProps={{
+                                min: 1,
+                                style: {
+                                  textAlign: 'center',
+                                  width: '60px',
+                                  fontWeight: 'bold',
+                                  fontSize: '0.9rem',
+                                  color: '#2f6b5f',
+                                },
+                              }}
+                              placeholder="₹0"
+                              onClick={(e) => e.stopPropagation()}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  e.preventDefault();
+                                  handleCustomPriceSubmit(service);
+                                }
+                              }}
+                              sx={{ flex: 1, mr: 1 }}
+                            />
+                            <Button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleCustomPriceSubmit(service);
+                              }}
+                              size="small"
+                              variant="contained"
+                              sx={{
+                                fontSize: '0.75rem',
+                                px: 2,
+                                py: 0.5,
+                                borderRadius: '8px',
+                                backgroundColor: '#2f6b5f',
+                                color: '#fff',
+                                textTransform: 'none',
+                                '&:hover': { backgroundColor: '#3c7089' },
+                              }}
+                            >
+                              Add
+                            </Button>
+                          </Box>
                         ) : (
                           <Chip
                             label={
