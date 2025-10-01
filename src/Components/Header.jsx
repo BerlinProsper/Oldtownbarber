@@ -8,6 +8,8 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import CIcon from '@coreui/icons-react';
@@ -74,7 +76,23 @@ const {handleDrawerClose, handleDrawerOpen, drawerOpen } = useServiceContext();
         </Typography>
 
         {/* Menu Icon */}
-      
+      <IconButton
+  size="large"
+  edge="end"
+  aria-label="cart"
+  onClick={() => handleNavigate("/MyCart")}
+  sx={{
+    color: '#f3f7f6ff',
+    mr: 1,
+    "&:hover": {
+      backgroundColor: "transparent",
+      color: "#a67b5b"
+    }
+  }}
+>
+  <ShoppingCartIcon />
+</IconButton>
+
       </Toolbar>
 
       {/* Drawer */}

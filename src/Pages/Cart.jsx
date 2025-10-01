@@ -214,7 +214,7 @@ const MyCart = () => {
                   fontSize: '1rem',
                 }}
               >
-                Your cart is empty 😔
+                Your cart is empty 
               </Typography>
             )}
           </Paper>
