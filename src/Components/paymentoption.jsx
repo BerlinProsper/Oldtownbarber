@@ -147,7 +147,7 @@ const PaymentModal = ({ onClose }) => {
                 </Typography>
 
                 <QRCodeSVG
-                  value={`upi://pay?pa=akarshmt-1@okicici&pn=Akarsh&am=${totalPrice}&cu=INR`}
+value={`upi://pay?pa=akarshmt-2@okaxis&pn=Akarsh&am=${totalPrice}&cu=INR`}
                   width={180}
                   height={180}
                   fgColor="#2f6b5f"
