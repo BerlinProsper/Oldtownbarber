@@ -14,27 +14,24 @@ import {
   useTheme,
   Fade,
   TextField,
+  IconButton,
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/DeleteOutline';
 import PaymentModal from '../Components/paymentoption';
 
 const MyCart = () => {
   const [openPayment, setOpenPayment] = useState(false);
-  const [showTipInput, setShowTipInput] = useState(false);
-  const [showDiscountInput, setShowDiscountInput] = useState(false);
-
-useEffect(() => {
-  setFinalTotal(totalPrice);
-}, []);
+  const [showInputs, setShowInputs] = useState(false);
 
   const {
     selectedService,
     setSelectedService,
     addDocument,
     totalPrice,
-   setTipValue,
-   tipValue,
-   setDiscountValue,
-   discountValue,
+    setTipValue,
+    tipValue,
+    setDiscountValue,
+    discountValue,
     emptyCart,
     setTotalPrice,
     discount,
@@ -42,32 +39,30 @@ useEffect(() => {
     finalTotal,
     setFinalTotal
   } = useServiceContext();
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const hasItems = selectedService && selectedService.length > 0;
+
+  useEffect(() => {
+    setFinalTotal(totalPrice);
+  }, []);
 
   const handleRemoveItem = (indexToRemove) => {
     setSelectedService((prev) => prev.filter((_, idx) => idx !== indexToRemove));
     setTotalPrice((prevTotal) => prevTotal - (selectedService[indexToRemove]?.price || 0));
   };
 
-  const handleApplyTip = () => {
+  const handleApplyAdjustments = () => {
     const tip = parseFloat(tipValue) || 0;
-    setFinalTotal(totalPrice + Number(tipValue) - Number(discountValue));
-    addATip(tip);
-    setShowTipInput(false);
-    setTipValue('');
-  };
-
-  const handleApplyDiscount = () => {
     const disc = parseFloat(discountValue) || 0;
-        setFinalTotal(totalPrice + Number(tipValue) - Number(discountValue));
-
+    setFinalTotal(totalPrice + tip - disc);
+    addATip(tip);
     discount(disc);
-    setShowDiscountInput(false);
+    setShowInputs(false);
+    setTipValue('');
     setDiscountValue('');
   };
-
 
   return (
     <>
@@ -76,12 +71,12 @@ useEffect(() => {
       <Box
         sx={{
           minHeight: '100vh',
-          background: 'linear-gradient(135deg, #b4d4ceff 0%, #ffffff 100%)',
+          background: 'linear-gradient(135deg, #d9f0ec 0%, #ffffff 100%)',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'flex-start',
+          p: 2,
           fontFamily: 'Nunito, sans-serif',
-          p: { xs: 1.5, sm: 3 },
         }}
       >
         <Fade in timeout={500}>
@@ -89,27 +84,26 @@ useEffect(() => {
             elevation={6}
             sx={{
               width: '100%',
-              maxWidth: 500,
-              mt: { xs: 4, sm: 8 },
-              px: { xs: 3, sm: 5 },
-              py: { xs: 3, sm: 5 },
-              borderRadius: '20px',
-              backgroundColor: '#f7fcfb',
-              border: '1px solid #d1e9e4',
-              boxShadow: '0 10px 30px rgba(0,0,0,0.07)',
-              transition: 'all 0.3s ease',
+              maxWidth: 380,
+              mt: 5,
+              px: 3,
+              py: 3.5,
+              borderRadius: '16px',
+              backgroundColor: '#f9fefc',
+              border: '1px solid #c6e6dd',
+              boxShadow: '0 6px 16px rgba(0, 0, 0, 0.06)',
             }}
           >
             <Typography
-              variant="h5"
+              variant="h6"
               sx={{
                 textAlign: 'center',
                 fontWeight: 800,
                 color: '#2f6b5f',
-                mb: 3,
+                mb: 2,
               }}
             >
-              🛒 Your Cart
+             Cart
             </Typography>
 
             {hasItems ? (
@@ -123,14 +117,14 @@ useEffect(() => {
                           display: 'flex',
                           justifyContent: 'space-between',
                           alignItems: 'center',
-                          py: 1.5,
+                          py: 1,
                         }}
                       >
                         <ListItemText
                           primary={item.name}
                           secondary={`₹${item.price}`}
                           primaryTypographyProps={{
-                            fontWeight: 700,
+                            fontWeight: 600,
                             fontSize: '1rem',
                             color: '#2f6b5f',
                           }}
@@ -139,119 +133,87 @@ useEffect(() => {
                             color: '#417c70',
                           }}
                         />
-                        <Button
+                        <IconButton
                           onClick={() => handleRemoveItem(index)}
-                          sx={{
-                            minWidth: 0,
-                            padding: 0,
-                            color: '#b71c1c',
-                            '&:hover': {
-                              backgroundColor: 'transparent',
-                              transform: 'scale(1.15)',
-                            },
-                          }}
+                          sx={{ color: '#b71c1c' }}
                         >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="20"
-                            height="20"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="#b71c1c"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <polyline points="3 6 5 6 21 6" />
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
-                            <line x1="10" y1="11" x2="10" y2="17" />
-                            <line x1="14" y1="11" x2="14" y2="17" />
-                          </svg>
-                        </Button>
+                          <DeleteIcon />
+                        </IconButton>
                       </ListItem>
                       {index < selectedService.length - 1 && <Divider />}
                     </React.Fragment>
                   ))}
                 </List>
 
+                {/* Final Total Box */}
                 <Box
                   sx={{
-                    backgroundColor: '#eaf7f5',
-                    borderRadius: '12px',
-                    p: 2,
+                    backgroundColor: '#e4f7f2',
+                    borderRadius: '10px',
+                    p: 1.5,
                     mt: 3,
                     textAlign: 'center',
                   }}
                 >
                   <Typography
                     variant="subtitle1"
-                    sx={{ fontWeight: 600, color: '#2f6b5f' }}
+                    sx={{
+                      fontWeight: 700,
+                      color: '#1d5c4f',
+                      fontSize: '1.05rem',
+                    }}
                   >
-                    💰 Final Total: <strong>₹{finalTotal.toFixed(2)}</strong>
-
+                    💰 Final Total: ₹{finalTotal.toFixed(2)}
                   </Typography>
-                  
                 </Box>
 
-                {/* Tip & Discount Buttons and Inputs */}
-                <Stack direction="column" spacing={1.5} sx={{ mt: 3 }}>
-                  <Box>
-                    <Button
-                      onClick={() => setShowTipInput((prev) => !prev)}
-                      sx={{
-                        fontWeight: 600,
-                        textTransform: 'none',
-                        color: '#2f6b5f',
-                        '&:hover': { backgroundColor: '#e0f2f1' },
-                      }}
-                    >
-                      ➕ Add a Tip
-                    </Button>
-                    {showTipInput && (
-                      <Stack direction="row" spacing={1} mt={1}>
-                        <TextField
-                          size="small"
-                          type="number"
-                          value={tipValue}
-                          onChange={(e) => setTipValue(e.target.value)}
-                          placeholder="Enter tip"
-                        />
-                        <Button variant="outlined" onClick={handleApplyTip}>
-                          OK
-                        </Button>
-                      </Stack>
-                    )}
-                  </Box>
+                {/* Tip & Discount Inputs */}
+                <Box sx={{ mt: 3 }}>
+                  <Button
+                    onClick={() => setShowInputs((prev) => !prev)}
+                    sx={{
+                      fontWeight: 600,
+                      textTransform: 'none',
+                      color: '#2f6b5f',
+                      mb: 1,
+                      '&:hover': { backgroundColor: '#e0f2f1' },
+                    }}
+                  >
+                    ➕ Tip & Discount
+                  </Button>
 
-                  <Box>
-                    <Button
-                      onClick={() => setShowDiscountInput((prev) => !prev)}
-                      sx={{
-                        fontWeight: 600,
-                        textTransform: 'none',
-                        color: '#2f6b5f',
-                        '&:hover': { backgroundColor: '#e0f2f1' },
-                      }}
-                    >
-                      🎟️ Apply Discount
-                    </Button>
-                    {showDiscountInput && (
-                      <Stack direction="row" spacing={1} mt={1}>
-                        <TextField
-                          size="small"
-                          type="number"
-                          value={discountValue}
-                          onChange={(e) => setDiscountValue(e.target.value)}
-                          placeholder="Enter discount"
-                        />
-                        <Button variant="outlined" onClick={handleApplyDiscount}>
-                          OK
-                        </Button>
-                      </Stack>
-                    )}
-                  </Box>
-                </Stack>
+                  {showInputs && (
+                    <Stack direction="row" spacing={1} alignItems="center">
+                      <TextField
+                        size="small"
+                        type="number"
+                        value={tipValue}
+                        onChange={(e) => setTipValue(e.target.value)}
+                        placeholder="Tip"
+                        variant="outlined"
+                        sx={{ flex: 1 }}
+                      />
+                      <TextField
+                        size="small"
+                        type="number"
+                        value={discountValue}
+                        onChange={(e) => setDiscountValue(e.target.value)}
+                        placeholder="Discount"
+                        variant="outlined"
+                        sx={{ flex: 1 }}
+                      />
+                      <Button
+                        variant="outlined"
+                        onClick={handleApplyAdjustments}
+                        sx={{ minWidth: 40, px: 2 }}
+                      >
+                        OK
+                      </Button>
+                    </Stack>
+                  )}
+                </Box>
 
+                {/* Action Buttons */}
                 <Stack
                   direction={isMobile ? 'column' : 'row'}
                   spacing={2}
@@ -266,9 +228,9 @@ useEffect(() => {
                       backgroundColor: '#2f6b5f',
                       '&:hover': { backgroundColor: '#417c70' },
                       fontWeight: 700,
-                      borderRadius: '12px',
+                      borderRadius: '10px',
                       fontSize: '1rem',
-                      py: 1.3,
+                      py: 1.2,
                       textTransform: 'none',
                     }}
                   >
@@ -283,9 +245,9 @@ useEffect(() => {
                       borderColor: '#2f6b5f',
                       color: '#2f6b5f',
                       fontWeight: 700,
-                      borderRadius: '12px',
+                      borderRadius: '10px',
                       fontSize: '1rem',
-                      py: 1.3,
+                      py: 1.2,
                       textTransform: 'none',
                       '&:hover': {
                         backgroundColor: '#e3f1f0',
@@ -304,11 +266,10 @@ useEffect(() => {
                   textAlign: 'center',
                   color: '#2f6b5f',
                   mt: 4,
-                  fontWeight: 500,
-                  fontSize: '1rem',
+                  fontWeight: 600,
                 }}
               >
-                Your cart is empty
+                💤  cart is empty
               </Typography>
             )}
           </Paper>
