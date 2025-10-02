@@ -144,49 +144,84 @@ const LastMonth = () => {
         </p>
       )}
 
-      <ul style={{ listStyle: "none", padding: 0 }}>
-        {history.map((item) => (
-          <li
-            key={item.id}
-            style={{
-              background: "#e4f4f1",
-              padding: "0.75rem",
-              marginBottom: "0.75rem",
-              borderRadius: "8px",
-              boxShadow: "0 2px 6px rgba(166, 123, 91, 0.1)",
-              border: "1px solid #639d92ff",
-              fontSize: "0.85rem",
-            }}
-          >
-            <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-              <div>
-                <strong>Services: </strong>
-                {formatServiceNames(item.services || [])}
-              </div>
-              <div>
-                <strong>Date: </strong>
-                {item.timestamp?.toDate().toLocaleString()}
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span>
-                  <strong>Price: </strong>₹{item.price}
-                </span>
-                <span>
-                  <strong>Payment: </strong>
-                  {item.payment === "CashUPI" && item.cash_plus_upi ? (
-                    <>
-                      ₹{item.cash_plus_upi} UPI + ₹
-                      {item.price - item.cash_plus_upi} Cash
-                    </>
-                  ) : (
-                    item.payment
-                  )}
-                </span>
-              </div>
-            </div>
-          </li>
-        ))}
-      </ul>
+     <ul style={{ listStyle: "none", padding: 0 }}>
+  {history.map((item) => (
+    <li
+      key={item.id}
+      style={{
+        background: "#ffffff",
+        padding: "1rem",
+        marginBottom: "1rem",
+        borderRadius: "10px",
+        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.05)",
+        border: "1px solid #e0e0e0",
+        fontSize: "0.9rem",
+        lineHeight: "1.4",
+      }}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+        {/* Service Name */}
+        <div>
+          <strong style={{ color: "#333" }}>Services:</strong>{" "}
+          <span style={{ color: "#555" }}>
+            {formatServiceNames(item.services || [])}
+          </span>
+        </div>
+
+        {/* Date */}
+        <div>
+          <strong style={{ color: "#333" }}>Date:</strong>{" "}
+          <span style={{ color: "#555" }}>
+            {item.timestamp?.toDate().toLocaleString()}
+          </span>
+        </div>
+
+        {/* Price Details */}
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "space-between",
+            rowGap: "6px",
+            columnGap: "10px",
+            padding: "0.5rem",
+            backgroundColor: "#f9f9f9",
+            borderRadius: "6px",
+          }}
+        >
+          <div>
+            <strong>Price:</strong> ₹{item.price}
+          </div>
+
+          <div>
+            <strong>Original:</strong> ₹{item.originalPrice ?? item.price}
+          </div>
+
+          <div>
+            <strong>Discount:</strong> ₹{item.discount ?? 0}
+          </div>
+
+          <div>
+            <strong>Tip:</strong> ₹{item.tip ?? 0}
+          </div>
+
+          <div>
+            <strong>Payment:</strong>{" "}
+            {item.payment === "CashUPI" && item.cash_plus_upi ? (
+              <>
+                ₹{item.cash_plus_upi} UPI + ₹
+                {item.price - item.cash_plus_upi} Cash
+              </>
+            ) : (
+              item.payment
+            )}
+          </div>
+        </div>
+      </div>
+    </li>
+  ))}
+</ul>
+
 
       <h3 style={{ marginTop: "2rem", fontSize: "1rem" }}>
         Total Collection: ₹{getTotal()}

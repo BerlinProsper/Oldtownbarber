@@ -28,7 +28,9 @@ const PaymentModal = ({ onClose }) => {
     setAddButtonClicked,
     totalPrice,
     splitUPI,
-    setSplitUPI
+    setSplitUPI,
+    finalTotal,
+
   } = useServiceContext();
 
   const theme = useTheme();
@@ -137,17 +139,17 @@ const PaymentModal = ({ onClose }) => {
             </Stack>
 
             {/* --- UPI QR --- */}
-            {cashOrUpi === 'UPI' && totalPrice > 0 && (
+            {cashOrUpi === 'UPI' && finalTotal > 0 && (
               <Box sx={{ textAlign: 'center', my: 4 }}>
                 <Typography
                   variant="subtitle1"
                   sx={{ color: '#2f6b5f', fontWeight: 600, mb: 1 }}
                 >
-                  Scan to Pay (₹{totalPrice})
+                  Scan to Pay (₹{finalTotal})
                 </Typography>
 
                 <QRCodeSVG
-value={`upi://pay?pa=akarshmt-2@okaxis&pn=Akarsh&am=${totalPrice}&cu=INR`}
+                  value={`upi://pay?pa=akarshmt-2@okaxis&pn=Akarsh&am=${finalTotal}&cu=INR`}
                   width={180}
                   height={180}
                   fgColor="#2f6b5f"
@@ -158,7 +160,7 @@ value={`upi://pay?pa=akarshmt-2@okaxis&pn=Akarsh&am=${totalPrice}&cu=INR`}
             )}
 
             {/* --- Cash + UPI Split --- */}
-            {cashOrUpi === 'CashUPI' && totalPrice > 0 && (
+            {cashOrUpi === 'CashUPI' && finalTotal > 0 && (
               <Box sx={{ textAlign: 'center', my: 4 }}>
                 {!showSplitQR ? (
                   <>
@@ -198,15 +200,15 @@ value={`upi://pay?pa=akarshmt-2@okaxis&pn=Akarsh&am=${totalPrice}&cu=INR`}
                           alert("Please enter a valid UPI amount.");
                           return;
                         }
-                        if (upiAmount <= totalPrice) {
+                        if (upiAmount <= finalTotal) {
                           setSplitMSG(
-                            `₹${upiAmount} to be paid via UPI and ₹${totalPrice - upiAmount
+                            `₹${upiAmount} to be paid via UPI and ₹${finalTotal - upiAmount
                             } to be paid in Cash.`
                           );
                           setShowSplitQR(true);
                         } else {
                           setSplitMSG(
-                            `Split amount cannot exceed total price ₹${totalPrice}. ₹${upiAmount} is too high.`
+                            `Split amount cannot exceed total price ₹${finalTotal}. ₹${upiAmount} is too high.`
                           );
                           setSplitUPI(0);
                         }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useServiceContext } from '../Context/MyContext';
 import {
   Box,
@@ -13,20 +13,35 @@ import {
   useMediaQuery,
   useTheme,
   Fade,
+  TextField,
 } from '@mui/material';
 import PaymentModal from '../Components/paymentoption';
 
 const MyCart = () => {
   const [openPayment, setOpenPayment] = useState(false);
+  const [showTipInput, setShowTipInput] = useState(false);
+  const [showDiscountInput, setShowDiscountInput] = useState(false);
+
+useEffect(() => {
+  setFinalTotal(totalPrice);
+}, []);
+
   const {
     selectedService,
     setSelectedService,
     addDocument,
     totalPrice,
+   setTipValue,
+   tipValue,
+   setDiscountValue,
+   discountValue,
     emptyCart,
     setTotalPrice,
+    discount,
+    addATip,
+    finalTotal,
+    setFinalTotal
   } = useServiceContext();
-
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const hasItems = selectedService && selectedService.length > 0;
@@ -35,6 +50,24 @@ const MyCart = () => {
     setSelectedService((prev) => prev.filter((_, idx) => idx !== indexToRemove));
     setTotalPrice((prevTotal) => prevTotal - (selectedService[indexToRemove]?.price || 0));
   };
+
+  const handleApplyTip = () => {
+    const tip = parseFloat(tipValue) || 0;
+    setFinalTotal(totalPrice + Number(tipValue) - Number(discountValue));
+    addATip(tip);
+    setShowTipInput(false);
+    setTipValue('');
+  };
+
+  const handleApplyDiscount = () => {
+    const disc = parseFloat(discountValue) || 0;
+        setFinalTotal(totalPrice + Number(tipValue) - Number(discountValue));
+
+    discount(disc);
+    setShowDiscountInput(false);
+    setDiscountValue('');
+  };
+
 
   return (
     <>
@@ -154,9 +187,70 @@ const MyCart = () => {
                     variant="subtitle1"
                     sx={{ fontWeight: 600, color: '#2f6b5f' }}
                   >
-                    💰 Total Price: <strong>₹{totalPrice}</strong>
+                    💰 Final Total: <strong>₹{finalTotal.toFixed(2)}</strong>
+
                   </Typography>
+                  
                 </Box>
+
+                {/* Tip & Discount Buttons and Inputs */}
+                <Stack direction="column" spacing={1.5} sx={{ mt: 3 }}>
+                  <Box>
+                    <Button
+                      onClick={() => setShowTipInput((prev) => !prev)}
+                      sx={{
+                        fontWeight: 600,
+                        textTransform: 'none',
+                        color: '#2f6b5f',
+                        '&:hover': { backgroundColor: '#e0f2f1' },
+                      }}
+                    >
+                      ➕ Add a Tip
+                    </Button>
+                    {showTipInput && (
+                      <Stack direction="row" spacing={1} mt={1}>
+                        <TextField
+                          size="small"
+                          type="number"
+                          value={tipValue}
+                          onChange={(e) => setTipValue(e.target.value)}
+                          placeholder="Enter tip"
+                        />
+                        <Button variant="outlined" onClick={handleApplyTip}>
+                          OK
+                        </Button>
+                      </Stack>
+                    )}
+                  </Box>
+
+                  <Box>
+                    <Button
+                      onClick={() => setShowDiscountInput((prev) => !prev)}
+                      sx={{
+                        fontWeight: 600,
+                        textTransform: 'none',
+                        color: '#2f6b5f',
+                        '&:hover': { backgroundColor: '#e0f2f1' },
+                      }}
+                    >
+                      🎟️ Apply Discount
+                    </Button>
+                    {showDiscountInput && (
+                      <Stack direction="row" spacing={1} mt={1}>
+                        <TextField
+                          size="small"
+                          type="number"
+                          value={discountValue}
+                          onChange={(e) => setDiscountValue(e.target.value)}
+                          placeholder="Enter discount"
+                        />
+                        <Button variant="outlined" onClick={handleApplyDiscount}>
+                          OK
+                        </Button>
+                      </Stack>
+                    )}
+                  </Box>
+                </Stack>
 
                 <Stack
                   direction={isMobile ? 'column' : 'row'}
@@ -214,7 +308,7 @@ const MyCart = () => {
                   fontSize: '1rem',
                 }}
               >
-                Your cart is empty 
+                Your cart is empty
               </Typography>
             )}
           </Paper>

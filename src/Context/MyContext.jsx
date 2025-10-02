@@ -9,7 +9,8 @@ export const ServiceProvider = ({ children }) => {
 
   const [selectedService, setSelectedService] = useState([]);
     const [splitUPI, setSplitUPI] = useState(0);
-
+ const [tipValue, setTipValue] = useState('');
+  const [discountValue, setDiscountValue] = useState('');
   const [cashOrUpi, setCashOrUpi] = useState('');
   const [paymentOption, setPaymentOption] = useState(0)
   const [totalPrice, setTotalPrice] = useState(0);
@@ -18,6 +19,7 @@ const [addButtonClicked, setAddButtonClicked]=useState(false)
 const [services, setServices] = useState([]);
   const [drawerOpen, setDrawerOpen] = React.useState(false);
 const [freeServices, setFreeServices] = useState([]);
+  const [finalTotal, setFinalTotal] = useState(0);
 
   const fetchServices = async () => {
     try {
@@ -45,6 +47,7 @@ function emptyCart(){
  setHistoryServices([])
    alert("Cart is now empty, No services added!");
 setTotalPrice(0);
+setFinalTotal(0)
   window.location.href = "/";
 }
 const addDocument = async () => {
@@ -84,7 +87,10 @@ const date = new Date().toLocaleString("en-IN", {
 const docRef = await addDoc(collection(db, "historyservices"), {
   id: generateUniqueCode(),
   services: selectedService,
-  price: totalPrice,
+  price: finalTotal,
+  orginalPrice: totalPrice,
+  tip: tipValue,
+  discount: discountValue,
   payment: cashOrUpi,
   cash_plus_upi: splitUPI,
   date: date,
@@ -131,7 +137,7 @@ async function getDocuments() {
 
 
   return (
-    <ServiceContext.Provider value={{  selectedService, setSelectedService, totalPrice, setTotalPrice , addDocument , emptyCart, services , fetchServices , paymentOption , setPaymentOption , cashOrUpi, setCashOrUpi , addButtonClicked, setAddButtonClicked, drawerOpen,  handleDrawerClose, handleDrawerOpen, setFreeServices, freeServices , splitUPI, setSplitUPI}}>
+    <ServiceContext.Provider value={{  selectedService, setSelectedService, totalPrice, setTotalPrice , addDocument , emptyCart, services , fetchServices , paymentOption , setPaymentOption , cashOrUpi, setCashOrUpi , addButtonClicked, setAddButtonClicked, drawerOpen,  handleDrawerClose, handleDrawerOpen, setFreeServices, freeServices , splitUPI, setSplitUPI, tipValue, setTipValue , discountValue, setDiscountValue, finalTotal, setFinalTotal, historyServices }}>
       {children}
     </ServiceContext.Provider>
   );
