@@ -260,33 +260,50 @@ const TodayHistory = () => {
             borderRadius: "6px",
           }}
         >
-          <div>
-            <strong>Price:</strong> ₹{item.price}
-          </div>
+         <div style={{
+  width: '100%',
+  border: '1px solid #e0e0e0',
+  borderRadius: '6px',
+  padding: '6px 10px',
+  fontSize: '12.5px',
+  fontFamily: 'system-ui, sans-serif',
+  backgroundColor: '#fcfcfc',
+  color: '#333',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '4px',
+  boxShadow: '0 1px 2px rgba(0,0,0,0.04)'
+}}>
+  {/* Row 1: Prices + Discount */}
+  <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+    <span>
+      <strong style={{ color: '#999', textDecoration: 'line-through' }}>
+        ₹{item.originalPrice ?? item.orginalPrice}
+      </strong>
+      &nbsp;→&nbsp;
+      <strong style={{ color: '#2e7d32' }}>
+        ₹{item.price}
+      </strong>
+    </span>
+    <span style={{ color: '#d32f2f' }}>
+      -₹{item.discount === "" ? 0 : item.discount}
+    </span>
+  </div>
 
-          <div>
-            <strong>Original:</strong> ₹{item.originalPrice ?? item.price}
-          </div>
+  {/* Row 2: Tip + Payment */}
+  <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+    <span>Tip: ₹{item.tip === "" ? 0 : item.tip}</span>
+    <span>
+      {item.payment === "CashUPI" && item.cash_plus_upi ? (
+        <>₹{item.cash_plus_upi} UPI + ₹{item.price - item.cash_plus_upi} Cash</>
+      ) : (
+        item.payment
+      )}
+    </span>
+  </div>
+</div>
 
-          <div>
-            <strong>Discount:</strong> ₹{item.discount ?? 0}
-          </div>
 
-          <div>
-            <strong>Tip:</strong> ₹{item.tip ?? 0}
-          </div>
-
-          <div>
-            <strong>Payment:</strong>{" "}
-            {item.payment === "CashUPI" && item.cash_plus_upi ? (
-              <>
-                ₹{item.cash_plus_upi} UPI + ₹
-                {item.price - item.cash_plus_upi} Cash
-              </>
-            ) : (
-              item.payment
-            )}
-          </div>
         </div>
       </div>
     </li>
