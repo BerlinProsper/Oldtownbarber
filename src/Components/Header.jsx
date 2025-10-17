@@ -27,7 +27,7 @@ const {handleDrawerClose, handleDrawerOpen, drawerOpen } = useServiceContext();
 
   return (
     <AppBar
-      position="static"
+      position="fixed"
       sx={{
         backgroundColor: '#2f6b5f',  // beige background
         boxShadow: "0 2px 8px rgba(102, 73, 49, 0.15)" // subtle shadow with dark brown tint
