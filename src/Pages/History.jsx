@@ -201,6 +201,8 @@ const handleDelete = async (customId) => {
         minHeight: "100vh",
         background: "#bce6ddff",
         padding: "1.5rem",
+        paddingTop: '4rem',
+
         borderRadius: "10px",
         boxShadow: "0 3px 12px rgba(102, 73, 49, 0.15)",
         color: "#2f6b5f",

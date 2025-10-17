@@ -117,10 +117,11 @@ function Container() {
             flexGrow: 1,
             overflowX: 'hidden',
             overflowY: 'hidden',
+            paddingTop: '4rem',
           }}
         >
           <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3, width: '100%' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3, width: '100%' , paddingTop: '10px'}}>
               <Typography variant="h6" sx={{ fontWeight: 800, color: '#2f6b5f', mb: 1 }}>
                 <strong>Choose Your Services</strong>
               </Typography>
